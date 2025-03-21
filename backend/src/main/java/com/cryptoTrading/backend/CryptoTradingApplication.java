@@ -1,13 +1,13 @@
-package com.example.backend;
+package com.cryptoTrading.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DemoApplication {
+public class CryptoTradingApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
+		SpringApplication.run(CryptoTradingApplication.class, args);
 	}
 
 }
