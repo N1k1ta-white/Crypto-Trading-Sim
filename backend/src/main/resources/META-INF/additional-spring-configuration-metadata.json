@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "kraken.websocket.url",
+  "type": "java.lang.String",
+  "description": "url for the websocket connection"
+}]}

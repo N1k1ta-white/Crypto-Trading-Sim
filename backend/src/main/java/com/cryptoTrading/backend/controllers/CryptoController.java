@@ -11,11 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CryptoController {
 
-    private final KrakenWebSocketClient krakenWebSocketClient;
-
     @GetMapping()
     public String getCoin() {
-        krakenWebSocketClient.connect();
         return "THis is a coin";
     }
 
