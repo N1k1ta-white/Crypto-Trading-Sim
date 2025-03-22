@@ -4,6 +4,9 @@ import com.cryptoTrading.backend.dto.CryptocurrencyDto;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import lombok.AllArgsConstructor;
+
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+// TODO: Implement exception throwing for all methods
 @Component
 public class KrakenWebSocketClient extends WebSocketClient {
     private static final Logger logger = Logger.getLogger(KrakenWebSocketClient.class.getName());
@@ -29,12 +33,8 @@ public class KrakenWebSocketClient extends WebSocketClient {
     private static final String SYMBOL_PARAM = "symbol";
     private static final String METHOD_PARAM = "method";
     private static final String PARAMS_PARAM = "params";
-    private static final String ERROR_FIELD = "error";
     private static final String DATA_FIELD = "data";
-    private static final String HEARTBEAT_VALUE = "heartbeat";
     private static final String TYPE_PARAM = "type";
-    private static final String SNAPSHOT_VALUE = "snapshot";
-    private static final String UPDATE_VALUE = "update";
     private static final int FIRST_ELEMENT = 0;
 
     private final Gson gson = new Gson();
@@ -43,22 +43,36 @@ public class KrakenWebSocketClient extends WebSocketClient {
     Map<String, CryptocurrencyDto> cryptocurrencyDTOMap = new HashMap<>();
 
     private enum MessageType {
-        HEARTBEAT,
-        SNAPSHOT,
-        UPDATE,
-        UNKNOWN;
+        HEARTBEAT("heartbeat"),
+        SNAPSHOT("snapshot"),
+        UPDATE("update"),
+        STATUS("status"),
+        UNKNOWN("unknown"),
+        ERROR("error");
+
+        private final String field;
+
+        MessageType(String field) {
+            this.field = field;
+        }
     
         public static MessageType determineMessageType(JsonObject jsonObject) {
             try {
+                if (jsonObject.has(ERROR.field)) {
+                    return MessageType.ERROR;
+                }
+
                 String channel = jsonObject.get(CHANNEL_PARAM).getAsString();
-                if (channel.equals(HEARTBEAT_VALUE)) {
+                if (channel.equals(HEARTBEAT.field)) {
                     return HEARTBEAT;
+                } else if (channel.equals(STATUS.field)) {
+                    return STATUS;
                 }
     
                 String type = jsonObject.get(TYPE_PARAM).getAsString();
-                if (type.equals(SNAPSHOT_VALUE)) {
+                if (type.equals(SNAPSHOT.field)) {
                     return SNAPSHOT;
-                } else if (type.equals(UPDATE_VALUE)) {
+                } else if (type.equals(UPDATE.field)) {
                     return UPDATE;
                 } else {
                     return UNKNOWN;
@@ -85,12 +99,6 @@ public class KrakenWebSocketClient extends WebSocketClient {
     public void onMessage(String message) {
         try {
             JsonObject parsedMessage = gson.fromJson(message, JsonObject.class);
-
-            if (containsError(parsedMessage)) {
-                handleErrorMessage(parsedMessage);
-                return;
-            }
-                        
             processMessageByType(parsedMessage);
         } catch (Exception e) {
             logger.warning("Error processing message: " + e.getMessage());
@@ -115,19 +123,14 @@ public class KrakenWebSocketClient extends WebSocketClient {
         reconnectOnClose = false;
         close();
     }
-
-    private boolean containsError(JsonObject messageData) {
-        return messageData.has(ERROR_FIELD);
-    }
-
-    private void handleErrorMessage(JsonObject object) {
-        logger.warning("Received error message: " + object.get(ERROR_FIELD));
-    }
     
     private void processMessageByType(JsonObject messageData) {
         MessageType messageType = MessageType.determineMessageType(messageData);
 
         switch (messageType) {
+            case ERROR:
+                handleErrorMessage(messageData);
+            break;
             case HEARTBEAT:
                 handleHeartbeat(messageData);
             break;
@@ -137,6 +140,9 @@ public class KrakenWebSocketClient extends WebSocketClient {
             case UPDATE:
                 handleTickerUpdate(messageData.get(DATA_FIELD));
             break;
+            case STATUS:
+                handleStatusMessage(messageData.get(DATA_FIELD));
+            break;
             default:
                 logger.info("Unhandled message type: " + messageType + " - " + messageData);
             break;
@@ -145,6 +151,10 @@ public class KrakenWebSocketClient extends WebSocketClient {
 
     private void handleHeartbeat(JsonObject object) {
         logger.fine("Received heartbeat");
+    }
+
+    private void handleErrorMessage(JsonObject object) {
+        logger.warning("Received error message: " + object.get(MessageType.ERROR.field));
     }
 
     private void handleTickerSnapshot(JsonElement obj) {
@@ -157,6 +167,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
         }
     }
 
+    // TODO: bug with connection
     private void handleTickerUpdate(JsonElement obj) {
         try {
             CryptocurrencyDto newCryptoDto = gson.fromJson(obj, CryptocurrencyDto[].class)[FIRST_ELEMENT];
@@ -174,6 +185,10 @@ public class KrakenWebSocketClient extends WebSocketClient {
         } catch (Exception e) {
             logger.warning("Error processing ticker update: " + e.getMessage());
         }
+    }
+
+    private void handleStatusMessage(JsonElement object) {
+        logger.warning("Received status message: " + object);
     }
 
     private CryptocurrencyDto updateData(CryptocurrencyDto existingData, 
@@ -200,18 +215,18 @@ public class KrakenWebSocketClient extends WebSocketClient {
         }
 
         try {
-            String request = createSubscriptionRequest(CHANNEL_PARAM, pairs);
+            String request = createSubscriptionRequest(pairs);
             logger.info("Subscribing to ticker with pairs: " + String.join(", ", pairs));
-            logger.fine("Subscription payload: " + request);
+            logger.info("Subscription payload: " + request);
             send(request);
         } catch (Exception e) {
             logger.severe("Error subscribing to ticker: " + e.getMessage());
         }
     }
 
-    private String createSubscriptionRequest(String channel, String[] pairs) {
+    private String createSubscriptionRequest(String[] pairs) {
         Map<String, Object> params = new HashMap<>();
-        params.put(CHANNEL_PARAM, channel);
+        params.put(CHANNEL_PARAM, TICKER_CHANNEL);
         params.put(SYMBOL_PARAM, pairs);
         
         Map<String, Object> subscription = new HashMap<>();
