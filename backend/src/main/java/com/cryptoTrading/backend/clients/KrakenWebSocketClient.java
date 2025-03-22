@@ -1,60 +1,235 @@
 package com.cryptoTrading.backend.clients;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.cryptoTrading.backend.dto.CryptocurrencyDto;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Component
 public class KrakenWebSocketClient extends WebSocketClient {
     private static final Logger logger = Logger.getLogger(KrakenWebSocketClient.class.getName());
+    private static final int RECONNECT_DELAY_MS = 5000;
+    private static final int CONNECTION_LOST_TIMEOUT = 10;
+    private static final String[] TRADING_PAIRS = {
+        "BTC/USD", "MATIC/USD", "ETH/USD", "ADA/USD", "XRP/USD"
+    };
+    private static final String TICKER_CHANNEL = "ticker";
+    private static final String SUBSCRIBE_METHOD = "subscribe";
+    private static final String CHANNEL_PARAM = "channel";
+    private static final String SYMBOL_PARAM = "symbol";
+    private static final String METHOD_PARAM = "method";
+    private static final String PARAMS_PARAM = "params";
+    private static final String ERROR_FIELD = "error";
+    private static final String DATA_FIELD = "data";
+    private static final String HEARTBEAT_VALUE = "heartbeat";
+    private static final String TYPE_PARAM = "type";
+    private static final String SNAPSHOT_VALUE = "snapshot";
+    private static final String UPDATE_VALUE = "update";
+    private static final int FIRST_ELEMENT = 0;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Gson gson = new Gson();
+    private boolean reconnectOnClose = true;
 
-    @Autowired
-    public KrakenWebSocketClient(@Value("${kraken.websocket.url}") String url) throws Exception {
-        super(new URI(url));
+    Map<String, CryptocurrencyDto> cryptocurrencyDTOMap = new HashMap<>();
+
+    private enum MessageType {
+        HEARTBEAT,
+        SNAPSHOT,
+        UPDATE,
+        UNKNOWN;
+    
+        public static MessageType determineMessageType(JsonObject jsonObject) {
+            try {
+                String channel = jsonObject.get(CHANNEL_PARAM).getAsString();
+                if (channel.equals(HEARTBEAT_VALUE)) {
+                    return HEARTBEAT;
+                }
+    
+                String type = jsonObject.get(TYPE_PARAM).getAsString();
+                if (type.equals(SNAPSHOT_VALUE)) {
+                    return SNAPSHOT;
+                } else if (type.equals(UPDATE_VALUE)) {
+                    return UPDATE;
+                } else {
+                    return UNKNOWN;
+                }
+            } catch (Exception e) {
+                return MessageType.UNKNOWN;
+            }
+        }
     }
 
+    public KrakenWebSocketClient(@Value("${kraken.websocket.url}") String url) throws Exception {
+        super(new URI(url));
+        this.setConnectionLostTimeout(CONNECTION_LOST_TIMEOUT);
+    }
+
+    // Main WebSocket lifecycle methods
     @Override
     public void onOpen(ServerHandshake handshakedata) {
-        logger.info("Connection opened");
-        subscribeToTicker(new String[]{"BTC/USD", "MATIC/GBP"});
+        logger.info("WebSocket connection opened. Status: " + handshakedata.getHttpStatus());
+        subscribeToTicker(TRADING_PAIRS);
     }
 
     @Override
     public void onMessage(String message) {
-        logger.info("Received message: " + message);
+        try {
+            JsonObject parsedMessage = gson.fromJson(message, JsonObject.class);
+
+            if (containsError(parsedMessage)) {
+                handleErrorMessage(parsedMessage);
+                return;
+            }
+                        
+            processMessageByType(parsedMessage);
+        } catch (Exception e) {
+            logger.warning("Error processing message: " + e.getMessage());
+        }
     }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        logger.info("Connection closed");
+        logger.info("WebSocket connection closed. Code: " + code + ", Reason: " + reason + ", Remote: " + remote);
+        if (reconnectOnClose) {
+            attemptReconnect();
+        }
     }
 
     @Override
     public void onError(Exception e) {
-        logger.severe("Error: " + e.getMessage());
+        logger.severe("WebSocket error: " + e.getMessage());
+        e.printStackTrace();
+    }
+
+    public void shutdown() {
+        reconnectOnClose = false;
+        close();
+    }
+
+    private boolean containsError(JsonObject messageData) {
+        return messageData.has(ERROR_FIELD);
+    }
+
+    private void handleErrorMessage(JsonObject object) {
+        logger.warning("Received error message: " + object.get(ERROR_FIELD));
+    }
+    
+    private void processMessageByType(JsonObject messageData) {
+        MessageType messageType = MessageType.determineMessageType(messageData);
+
+        switch (messageType) {
+            case HEARTBEAT:
+                handleHeartbeat(messageData);
+            break;
+            case SNAPSHOT:
+                handleTickerSnapshot(messageData.get(DATA_FIELD));
+            break;
+            case UPDATE:
+                handleTickerUpdate(messageData.get(DATA_FIELD));
+            break;
+            default:
+                logger.info("Unhandled message type: " + messageType + " - " + messageData);
+            break;
+        }
+    }
+
+    private void handleHeartbeat(JsonObject object) {
+        logger.fine("Received heartbeat");
+    }
+
+    private void handleTickerSnapshot(JsonElement obj) {
+        try {
+            CryptocurrencyDto cryptoDto = gson.fromJson(obj, CryptocurrencyDto[].class)[FIRST_ELEMENT];
+            cryptocurrencyDTOMap.put(cryptoDto.getSymbol(), cryptoDto);
+            logger.info("Received ticker snapshot");
+        } catch (Exception e) {
+            logger.warning("Error processing ticker update: " + e.getMessage());
+        }
+    }
+
+    private void handleTickerUpdate(JsonElement obj) {
+        try {
+            CryptocurrencyDto newCryptoDto = gson.fromJson(obj, CryptocurrencyDto[].class)[FIRST_ELEMENT];
+            CryptocurrencyDto cryptoDto = cryptocurrencyDTOMap.get(newCryptoDto.getSymbol());
+
+            if (cryptoDto == null) {
+                logger.warning("Received update for unknown trading pair: " + newCryptoDto.getSymbol());
+                return;
+            }
+
+            cryptoDto = updateData(cryptoDto, newCryptoDto);
+
+            cryptocurrencyDTOMap.put(cryptoDto.getSymbol(), cryptoDto);
+            logger.info("Received ticker update");
+        } catch (Exception e) {
+            logger.warning("Error processing ticker update: " + e.getMessage());
+        }
+    }
+
+    private CryptocurrencyDto updateData(CryptocurrencyDto existingData, 
+                                        CryptocurrencyDto latestMarketData) {
+        Optional.ofNullable(latestMarketData.getBid()).ifPresent(existingData::setBid);
+        Optional.ofNullable(latestMarketData.getBidQty()).ifPresent(existingData::setBidQty);
+        Optional.ofNullable(latestMarketData.getAsk()).ifPresent(existingData::setAsk);
+        Optional.ofNullable(latestMarketData.getAskQty()).ifPresent(existingData::setAskQty);
+        Optional.ofNullable(latestMarketData.getLast()).ifPresent(existingData::setLast);
+        Optional.ofNullable(latestMarketData.getVolume()).ifPresent(existingData::setVolume);
+        Optional.ofNullable(latestMarketData.getVwap()).ifPresent(existingData::setVwap);
+        Optional.ofNullable(latestMarketData.getLow()).ifPresent(existingData::setLow);
+        Optional.ofNullable(latestMarketData.getHigh()).ifPresent(existingData::setHigh);
+        Optional.ofNullable(latestMarketData.getChange()).ifPresent(existingData::setChange);
+        Optional.ofNullable(latestMarketData.getChangePct()).ifPresent(existingData::setChangePct);
+
+        return existingData;
     }
 
     private void subscribeToTicker(String[] pairs) {
-        Map<String, Object> subscription = Map.of(
-                "event", "subscribe",
-                "pair", pairs,
-                "subscription", Map.of("name", "ticker")
-        );
+        if (pairs == null || pairs.length == 0) {
+            logger.warning("No trading pairs provided for subscription");
+            return;
+        }
+
         try {
-            String request = objectMapper.writeValueAsString(subscription);
+            String request = createSubscriptionRequest(CHANNEL_PARAM, pairs);
+            logger.info("Subscribing to ticker with pairs: " + String.join(", ", pairs));
+            logger.fine("Subscription payload: " + request);
             send(request);
         } catch (Exception e) {
             logger.severe("Error subscribing to ticker: " + e.getMessage());
         }
     }
 
+    private String createSubscriptionRequest(String channel, String[] pairs) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(CHANNEL_PARAM, channel);
+        params.put(SYMBOL_PARAM, pairs);
+        
+        Map<String, Object> subscription = new HashMap<>();
+        subscription.put(METHOD_PARAM, SUBSCRIBE_METHOD);
+        subscription.put(PARAMS_PARAM, params);
+        
+        return gson.toJson(subscription);
+    }
+
+    private void attemptReconnect() {
+        new Thread(() -> {
+            try {
+                logger.info("Attempting to reconnect in " + RECONNECT_DELAY_MS/1000 + " seconds");
+                Thread.sleep(RECONNECT_DELAY_MS);
+                reconnect();
+            } catch (Exception e) {
+                logger.severe("Failed to reconnect: " + e.getMessage());
+            }
+        }).start();
+    }
 }
