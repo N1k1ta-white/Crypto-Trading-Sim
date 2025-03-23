@@ -1,10 +1,53 @@
-<section>
-    <h2>Crypto WebSocket</h2>
-    <h3>Crypto:</h3>
-    <ul>
-    @for (item of crypto | keyvalue; track item.key) {
-      <li>{{ item.key }}: {{ item.value.last }}</li>
-    }
-    </ul>
-</section>
+<input type="checkbox" id="theme-toggle" class="theme-toggle">
+
+<div class="dashboard-container">
+  <label for="theme-toggle" class="theme-toggle-label"></label>
   
+  <div class="dashboard-header">
+    <h1>Crypto Trading Dashboard</h1>
+    <p class="subtitle">Real-time cryptocurrency market data</p>
+  </div>
+  
+  <div class="card">
+    <div class="card-header">
+      <h2>Market Overview</h2>
+      <div class="refresh-indicator">
+        <span class="indicator-dot"></span>
+        <span>Live updates</span>
+      </div>
+    </div>
+    
+    <p-table [value]="cryptoArray" [responsive]="true" styleClass="crypto-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Asset</th>
+          <th>Symbol</th>
+          <th>Price (USD)</th>
+          <th>24h Change</th>
+          <th>Volume</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-crypto>
+        <tr>
+          <td class="asset-cell">
+            <div class="crypto-icon" [attr.data-symbol]="crypto.symbol">
+              {{ crypto.symbol.slice(0,1) }}
+            </div>
+            <span class="asset-name">{{ crypto.symbol }}</span>
+          </td>
+          <td>{{ crypto.symbol }}</td>
+          <td class="price-cell" [ngClass]="{'price-up': getPriceChangeStatus(crypto.symbol) === 'up', 'price-down': getPriceChangeStatus(crypto.symbol) === 'down'}">
+            ${{ crypto.last | number:'1.2-2' }}
+          </td>
+          <td>
+            <div class="change-indicator" [ngClass]="{'positive': crypto.change > 0, 'negative': crypto.change < 0, 'neutral': crypto.change === 0}">
+              <i class="pi" [ngClass]="crypto.change > 0 ? 'pi-arrow-up' : (crypto.change < 0 ? 'pi-arrow-down' : 'pi-minus')"></i>
+              <span>{{ crypto.change | number:'1.2-2' }}$ ({{ crypto.changePct | number:'1.2-2' }}%)</span>
+            </div>
+          </td>
+          <td class="volume-cell">${{ crypto.volume | number }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

@@ -1,0 +1,439 @@
+/* CSS Variables for theming */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9f9f9;
+  --bg-table-header: #f8f9fa;
+  --bg-table-hover: #f8f9fa;
+  --bg-card: #ffffff;
+  --border-color: #eee;
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --text-subtitle: #7f8c8d;
+  --price-up: #27ae60;
+  --price-down: #e74c3c;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --gradient-start: #3498db;
+  --gradient-end: #2c3e50;
+  --positive-bg: rgba(46, 204, 113, 0.15);
+  --negative-bg: rgba(231, 76, 60, 0.15);
+  --neutral-bg: rgba(149, 165, 166, 0.15);
+}
+
+/* Dark theme variables when toggle is checked */
+.theme-toggle:checked ~ .dashboard-container {
+  --bg-primary: #1a1c1e;
+  --bg-secondary: #2c3032;
+  --bg-table-header: #2c3032;
+  --bg-table-hover: #2f3335;
+  --bg-card: #242729;
+  --border-color: #333;
+  --text-primary: #e5e5e5;
+  --text-secondary: #a0a0a0;
+  --text-subtitle: #a0a0a0;
+  --price-up: #4cd987;
+  --price-down: #ff6b6b;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --gradient-start: #4fa3e3;
+  --gradient-end: #78a2c5;
+  --positive-bg: rgba(46, 204, 113, 0.2);
+  --negative-bg: rgba(231, 76, 60, 0.2);
+  --neutral-bg: rgba(149, 165, 166, 0.2);
+}
+
+/* System-preference based dark theme */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-mode-forced) {
+    --bg-primary: #1a1c1e;
+    --bg-secondary: #2c3032;
+    --bg-table-header: #2c3032;
+    --bg-table-hover: #2f3335;
+    --bg-card: #242729;
+    --border-color: #333;
+    --text-primary: #e5e5e5;
+    --text-secondary: #a0a0a0;
+    --text-subtitle: #a0a0a0;
+    --price-up: #4cd987;
+    --price-down: #ff6b6b;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --gradient-start: #4fa3e3;
+    --gradient-end: #78a2c5;
+    --positive-bg: rgba(46, 204, 113, 0.2);
+    --negative-bg: rgba(231, 76, 60, 0.2);
+    --neutral-bg: rgba(149, 165, 166, 0.2);
+  }
+  
+  /* Override system preference when toggle is explicitly set */
+  .theme-toggle:not(:checked) ~ .dashboard-container {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9f9f9;
+    --bg-table-header: #f8f9fa;
+    --bg-table-hover: #f8f9fa;
+    --bg-card: #ffffff;
+    --border-color: #eee;
+    --text-primary: #2c3e50;
+    --text-secondary: #7f8c8d;
+    --text-subtitle: #7f8c8d;
+    --price-up: #27ae60;
+    --price-down: #e74c3c;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --gradient-start: #3498db;
+    --gradient-end: #2c3e50;
+    --positive-bg: rgba(46, 204, 113, 0.15);
+    --negative-bg: rgba(231, 76, 60, 0.15);
+    --neutral-bg: rgba(149, 165, 166, 0.15);
+  }
+}
+
+/* Hide the checkbox but make it accessible */
+.theme-toggle {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Theme toggle button style */
+.theme-toggle-label {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-weight: 500;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle-label:hover {
+  filter: brightness(0.95);
+}
+
+/* Theme icons using CSS */
+.theme-toggle-label::before {
+  content: "🌙";
+  margin-right: 8px;
+  font-size: 1rem;
+}
+
+.theme-toggle:checked ~ .dashboard-container .theme-toggle-label::before {
+  content: "☀️";
+}
+
+/* Default theme text */
+.theme-toggle-label::after {
+  content: "Dark Mode";
+}
+
+.theme-toggle:checked ~ .dashboard-container .theme-toggle-label::after {
+  content: "Light Mode";
+}
+
+/* Dashboard container styles */
+.dashboard-container {
+  padding: 2rem;
+  min-height: calc(100vh - 4rem);
+  width: calc(100% - 4rem);
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
+/* Dashboard header styles */
+.dashboard-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  color: var(--text-subtitle);
+  font-size: 1.1rem;
+}
+
+/* Card styles */
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px var(--shadow-color);
+  overflow: hidden;
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-header {
+  padding: 1.5rem 2rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.card-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Live data indicator */
+.refresh-indicator {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.indicator-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #2ecc71;
+  border-radius: 50%;
+  margin-right: 8px;
+  position: relative;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+  }
+}
+
+/* Table styling */
+:host ::ng-deep .crypto-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+:host ::ng-deep .crypto-table th {
+  background-color: var(--bg-table-header);
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+:host ::ng-deep .crypto-table td {
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+:host ::ng-deep .crypto-table tr:hover {
+  background-color: var(--bg-table-hover);
+  transition: background-color 0.3s ease;
+}
+
+/* Asset cell with icon */
+.asset-cell {
+  display: flex;
+  align-items: center;
+}
+
+.crypto-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-weight: bold;
+  color: white;
+  background-color: #3498db;
+}
+
+/* Dynamic colors based on symbol */
+.crypto-icon[data-symbol^="BTC"] { background-color: #f7931a; }
+.crypto-icon[data-symbol^="ETH"] { background-color: #627eea; }
+.crypto-icon[data-symbol^="XRP"] { background-color: #00aae4; }
+.crypto-icon[data-symbol^="LTC"] { background-color: #bfbbbb; }
+.crypto-icon[data-symbol^="ADA"] { background-color: #3cc8c8; }
+.crypto-icon[data-symbol^="DOT"] { background-color: #e6007a; }
+.crypto-icon[data-symbol^="DOGE"] { background-color: #c3a634; }
+
+.asset-name {
+  font-weight: 600;
+}
+
+/* Price and change cells */
+.price-cell {
+  font-weight: 600;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  transition: color 0.3s ease;
+}
+
+.change-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.change-indicator.positive {
+  background-color: var(--positive-bg);
+  color: var(--price-up);
+}
+
+.change-indicator.negative {
+  background-color: var(--negative-bg);
+  color: var(--price-down);
+}
+
+.change-indicator.neutral {
+  background-color: var(--neutral-bg);
+  color: var(--text-secondary);
+}
+
+.change-indicator i {
+  margin-right: 5px;
+}
+
+/* Volume cell */
+.volume-cell {
+  color: var(--text-secondary);
+}
+
+/* Price change indicators with text color only */
+.price-up {
+  color: var(--price-up);
+  position: relative;
+  animation: flash-green-text 1s;
+}
+
+.price-down {
+  color: var(--price-down);
+  position: relative;
+  animation: flash-red-text 1s;
+}
+
+/* Remove the dots */
+.price-up::after, .price-down::after {
+  display: none;
+}
+
+/* Text-only animations for color flashing with theme awareness */
+@keyframes flash-green-text {
+  0% { color: var(--price-up); text-shadow: 0 0 8px rgba(46, 204, 113, 0.7); }
+  50% { color: var(--price-up); text-shadow: 0 0 5px rgba(46, 204, 113, 0.5); }
+  100% { color: var(--price-up); text-shadow: none; }
+}
+
+@keyframes flash-red-text {
+  0% { color: var(--price-down); text-shadow: 0 0 8px rgba(231, 76, 60, 0.7); }
+  50% { color: var(--price-down); text-shadow: 0 0 5px rgba(231, 76, 60, 0.5); }
+  100% { color: var(--price-down); text-shadow: none; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .card-header {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .refresh-indicator {
+    margin-top: 0.5rem;
+  }
+  
+  :host ::ng-deep .crypto-table th,
+  :host ::ng-deep .crypto-table td {
+    padding: 0.8rem 1rem;
+  }
+  
+  .theme-toggle-label {
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Full-page dark theme application */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Apply dark theme to body when toggle is checked */
+.theme-toggle:checked ~ body,
+.theme-toggle:checked {
+  --bg-primary: #1a1c1e;
+  --bg-secondary: #2c3032;
+  --bg-table-header: #2c3032;
+  --bg-table-hover: #2f3335;
+  --bg-card: #242729;
+  --border-color: #333;
+  --text-primary: #e5e5e5;
+  --text-secondary: #a0a0a0;
+  --text-subtitle: #a0a0a0;
+  --price-up: #4cd987;
+  --price-down: #ff6b6b;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --gradient-start: #4fa3e3;
+  --gradient-end: #78a2c5;
+  --positive-bg: rgba(46, 204, 113, 0.2);
+  --negative-bg: rgba(231, 76, 60, 0.2);
+  --neutral-bg: rgba(149, 165, 166, 0.2);
+}
+
+/* Style the whole app container to ensure full coverage */
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
+}
