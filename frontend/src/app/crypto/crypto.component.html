@@ -1,0 +1,10 @@
+<section>
+    <h2>Crypto WebSocket</h2>
+    <h3>Crypto:</h3>
+    <ul>
+    @for (item of crypto | keyvalue; track item.key) {
+      <li>{{ item.key }}: {{ item.value.last }}</li>
+    }
+    </ul>
+</section>
+  

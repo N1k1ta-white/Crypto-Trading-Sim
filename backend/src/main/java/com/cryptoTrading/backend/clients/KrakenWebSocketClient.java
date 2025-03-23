@@ -8,15 +8,24 @@ import com.google.gson.JsonObject;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
 // TODO: Implement exception throwing for all methods
+// TODO: Refactor to implement repository pattern for cryptocurrency data management
+// - Create a separate CryptocurrencyRepository interface
+// - Implement in-memory and/or persistent storage implementations
+// - Decouple data access from WebSocket client logic
+
 @Component
 public class KrakenWebSocketClient extends WebSocketClient {
     private static final Logger logger = Logger.getLogger(KrakenWebSocketClient.class.getName());
@@ -37,6 +46,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
 
     private final Gson gson = new Gson();
     private boolean reconnectOnClose = true;
+    private final SimpMessagingTemplate messagingTemplate;
 
     Map<String, CryptocurrencyDto> cryptocurrencyDTOMap = new HashMap<>();
 
@@ -81,8 +91,10 @@ public class KrakenWebSocketClient extends WebSocketClient {
         }
     }
 
-    public KrakenWebSocketClient(@Value("${kraken.websocket.url}") String url) throws Exception {
+    public KrakenWebSocketClient(@Value("${kraken.websocket.url}") String url, 
+                                    SimpMessagingTemplate messagingTemplate) throws Exception {
         super(new URI(url));
+        this.messagingTemplate = messagingTemplate;
         this.setConnectionLostTimeout(CONNECTION_LOST_TIMEOUT);
     }
 
@@ -117,9 +129,14 @@ public class KrakenWebSocketClient extends WebSocketClient {
         e.printStackTrace();
     }
 
+    @EventListener(ContextClosedEvent.class)
     public void shutdown() {
         reconnectOnClose = false;
         close();
+    }
+
+    public Collection<CryptocurrencyDto> fetchTradingPairs() {
+        return cryptocurrencyDTOMap.values();
     }
     
     private void processMessageByType(JsonObject messageData) {
@@ -165,7 +182,6 @@ public class KrakenWebSocketClient extends WebSocketClient {
         }
     }
 
-    // TODO: bug with connection
     private void handleTickerUpdate(JsonElement obj) {
         try {
             CryptocurrencyDto newCryptoDto = gson.fromJson(obj, CryptocurrencyDto[].class)[FIRST_ELEMENT];
@@ -177,8 +193,10 @@ public class KrakenWebSocketClient extends WebSocketClient {
             }
 
             cryptoDto = updateData(cryptoDto, newCryptoDto);
-
             cryptocurrencyDTOMap.put(cryptoDto.getSymbol(), cryptoDto);
+
+            messagingTemplate.convertAndSend("/update/crypto", newCryptoDto);
+
             logger.info("Received ticker update");
         } catch (Exception e) {
             logger.warning("Error processing ticker update: " + e.getMessage());
