@@ -10,6 +10,8 @@ export class WebSocketService {
   private stompClient: Client | null = null;
   private messageSubject = new BehaviorSubject<string | null>(null);
   private sessionId: string | null = null;
+  // Add connection status subject
+  private connectionStatusSubject = new BehaviorSubject<boolean>(false);
 
   constructor() {
     this.connect();
@@ -26,6 +28,8 @@ export class WebSocketService {
 
     this.stompClient.onConnect = async (_frame) => {
         console.log('Connected to WebSocket');
+        // Set status to connected
+        this.connectionStatusSubject.next(true);
 
         const uuid = crypto.randomUUID();
         this.sessionId = uuid;
@@ -53,10 +57,13 @@ export class WebSocketService {
 
     this.stompClient.onStompError = (frame) => {
         console.error('STOMP error', frame);
+        this.connectionStatusSubject.next(false);
     };
             
     this.stompClient.onWebSocketClose = () => {
         console.warn('WebSocket disconnected');
+        // Set status to disconnected
+        this.connectionStatusSubject.next(false);
     };
 
     this.stompClient.activate();
@@ -64,5 +71,10 @@ export class WebSocketService {
 
   getMessages(): Observable<string | null> {
     return this.messageSubject.asObservable();
+  }
+
+  // Add method to get connection status
+  getConnectionStatus(): Observable<boolean> {
+    return this.connectionStatusSubject.asObservable();
   }
 }

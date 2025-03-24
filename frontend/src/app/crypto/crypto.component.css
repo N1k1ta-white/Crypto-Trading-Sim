@@ -255,6 +255,11 @@
   transition: border-color 0.3s ease, color 0.3s ease;
 }
 
+/* Apply transition to all td elements for base styling */
+:host ::ng-deep .crypto-table td {
+  transition: color 1.5s ease-out;
+}
+
 :host ::ng-deep .crypto-table tr:hover {
   background-color: var(--bg-table-hover);
   transition: background-color 0.3s ease;
@@ -297,7 +302,8 @@
   font-weight: 600;
   font-size: 1.1rem;
   border-radius: 4px;
-  transition: color 0.3s ease;
+  transition: color 1.2s ease-out; /* Longer, smoother transition */
+  color: var(--text-primary);
 }
 
 .change-indicator {
@@ -324,7 +330,7 @@
   color: var(--text-secondary);
 }
 
-.change-indicator i {
+.change-indicator.i {
   margin-right: 5px;
 }
 
@@ -333,35 +339,19 @@
   color: var(--text-secondary);
 }
 
-/* Price change indicators with text color only */
 .price-up {
-  color: var(--price-up);
-  position: relative;
-  animation: flash-green-text 1s;
+  color: var(--price-up) !important;
+  transition: color 1.5s ease-out;
 }
 
 .price-down {
-  color: var(--price-down);
-  position: relative;
-  animation: flash-red-text 1s;
+  color: var(--price-down) !important;
+  transition: color 1.5s ease-out;
 }
 
 /* Remove the dots */
 .price-up::after, .price-down::after {
   display: none;
-}
-
-/* Text-only animations for color flashing with theme awareness */
-@keyframes flash-green-text {
-  0% { color: var(--price-up); text-shadow: 0 0 8px rgba(46, 204, 113, 0.7); }
-  50% { color: var(--price-up); text-shadow: 0 0 5px rgba(46, 204, 113, 0.5); }
-  100% { color: var(--price-up); text-shadow: none; }
-}
-
-@keyframes flash-red-text {
-  0% { color: var(--price-down); text-shadow: 0 0 8px rgba(231, 76, 60, 0.7); }
-  50% { color: var(--price-down); text-shadow: 0 0 5px rgba(231, 76, 60, 0.5); }
-  100% { color: var(--price-down); text-shadow: none; }
 }
 
 /* Responsive adjustments */
@@ -430,10 +420,209 @@ body {
   --neutral-bg: rgba(149, 165, 166, 0.2);
 }
 
+.pi {
+  margin-right: 5px;
+}
+
 /* Style the whole app container to ensure full coverage */
 :host {
   display: block;
   min-height: 100vh;
   background-color: var(--bg-primary);
   transition: background-color 0.3s ease;
+}
+
+/* Add to your existing CSS file */
+
+/* Make table rows clickable */
+.crypto-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.crypto-row:hover {
+  background-color: var(--bg-table-hover);
+}
+
+/* Dialog styling */
+:host ::ng-deep .crypto-detail-dialog {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  max-width: 90%; /* Ensure the modal width is responsive */
+  width: auto;
+}
+
+:host ::ng-deep .crypto-detail-dialog .p-dialog-header {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.5rem;
+}
+
+:host ::ng-deep .crypto-detail-dialog .p-dialog-content {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  padding: 0;
+  max-height: calc(100vh - 100px); /* Ensure the modal content fits within the viewport */
+  overflow-y: auto; /* Add scrolling only if content exceeds the max height */
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.crypto-icon-large {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: white;
+  background-color: #3498db;
+}
+
+/* Use the same color classes as for the regular icons */
+.crypto-icon-large[data-symbol^="BTC"] { background-color: #f7931a; }
+.crypto-icon-large[data-symbol^="ETH"] { background-color: #627eea; }
+.crypto-icon-large[data-symbol^="XRP"] { background-color: #00aae4; }
+.crypto-icon-large[data-symbol^="LTC"] { background-color: #bfbbbb; }
+.crypto-icon-large[data-symbol^="ADA"] { background-color: #3cc8c8; }
+.crypto-icon-large[data-symbol^="DOT"] { background-color: #e6007a; }
+.crypto-icon-large[data-symbol^="DOGE"] { background-color: #c3a634; }
+
+.crypto-detail-content {
+  padding: 1.5rem;
+}
+
+.detail-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.detail-section:last-of-type {
+  border-bottom: none;
+}
+
+.detail-section h3 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.3rem;
+}
+
+.detail-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.detail-value.positive {
+  color: var(--price-up);
+}
+
+.detail-value.negative {
+  color: var(--price-down);
+}
+
+.detail-action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.action-button {
+  flex: 1;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trade-button {
+  background-color: var(--price-up);
+  color: white;
+}
+
+.trade-button:hover {
+  background-color: var(--price-up);
+  filter: brightness(1.1);
+}
+
+.add-watchlist-button {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.add-watchlist-button:hover {
+  background-color: var(--bg-table-hover);
+}
+
+/* Responsive design for the detail dialog */
+@media (max-width: 600px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .detail-action-buttons {
+    flex-direction: column;
+  }
+}
+
+/* ... existing styles ... */
+
+.indicator-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.indicator-dot.connected {
+  background-color: #4caf50; /* Green */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.6);
+}
+
+.indicator-dot.disconnected {
+  background-color: #f44336; /* Red */
+  box-shadow: 0 0 5px rgba(244, 67, 54, 0.6);
+}
+
+.refresh-indicator {
+  display: flex;
+  align-items: center;
 }

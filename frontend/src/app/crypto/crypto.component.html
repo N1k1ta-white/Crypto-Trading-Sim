@@ -12,8 +12,8 @@
     <div class="card-header">
       <h2>Market Overview</h2>
       <div class="refresh-indicator">
-        <span class="indicator-dot"></span>
-        <span>Live updates</span>
+        <span class="indicator-dot" [ngClass]="{'connected': isConnected, 'disconnected': !isConnected}"></span>
+        <span>{{ isConnected ? 'Live updates' : 'Offline' }}</span>
       </div>
     </div>
     
@@ -24,11 +24,11 @@
           <th>Symbol</th>
           <th>Price (USD)</th>
           <th>24h Change</th>
-          <th>Volume</th>
+          <th>24h Volume</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-crypto>
-        <tr>
+        <tr (click)="showDetails(crypto)" class="crypto-row">
           <td class="asset-cell">
             <div class="crypto-icon" [attr.data-symbol]="crypto.symbol">
               {{ crypto.symbol.slice(0,1) }}
@@ -37,17 +37,92 @@
           </td>
           <td>{{ crypto.symbol }}</td>
           <td class="price-cell" [ngClass]="{'price-up': getPriceChangeStatus(crypto.symbol) === 'up', 'price-down': getPriceChangeStatus(crypto.symbol) === 'down'}">
-            ${{ crypto.last | number:'1.2-2' }}
+            ${{ crypto.last | number:'1.3-3' }}
           </td>
           <td>
             <div class="change-indicator" [ngClass]="{'positive': crypto.change > 0, 'negative': crypto.change < 0, 'neutral': crypto.change === 0}">
               <i class="pi" [ngClass]="crypto.change > 0 ? 'pi-arrow-up' : (crypto.change < 0 ? 'pi-arrow-down' : 'pi-minus')"></i>
-              <span>{{ crypto.change | number:'1.2-2' }}$ ({{ crypto.changePct | number:'1.2-2' }}%)</span>
+              <span> {{ crypto.change | number:'1.3-3' }}$ ({{ crypto.changePct | number:'1.2-2' }}%)</span>
             </div>
           </td>
-          <td class="volume-cell">${{ crypto.volume | number }}</td>
+          <td class="volume-cell">${{ (crypto.volume * crypto.vwap) | number: '1.0-0' }}</td>
         </tr>
       </ng-template>
     </p-table>
   </div>
+
+  <p-dialog 
+    [(visible)]="showDetailDialog" 
+    [modal]="true" 
+    [resizable]="false"
+    [draggable]="true"
+    [style]="{width: '90%', maxWidth: '600px'}"
+    styleClass="crypto-detail-dialog" *ngIf="selectedCrypto">
+    
+    <ng-template pTemplate="header">
+      <div class="dialog-header">
+        <div class="crypto-icon-large" [attr.data-symbol]="selectedCrypto.symbol">
+          {{ selectedCrypto.symbol.slice(0,1) }}
+        </div>
+        <h2>{{ selectedCrypto.symbol }} Details</h2>
+      </div>
+    </ng-template>
+    
+    <div class="crypto-detail-content">
+      <div class="detail-section">
+        <h3>Price Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Current Price</span>
+            <span class="detail-value">${{ selectedCrypto.last | number:'1.2-6' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">24h Change</span>
+            <span class="detail-value" [ngClass]="{'positive': selectedCrypto.change > 0, 'negative': selectedCrypto.change < 0}">
+              {{ selectedCrypto.change | number:'1.2-2' }}$ ({{ selectedCrypto.changePct | number:'1.2-2' }}%)
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Bid Price</span>
+            <span class="detail-value">${{ selectedCrypto.bid | number:'1.2-6' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Ask Price</span>
+            <span class="detail-value">${{ selectedCrypto.ask | number:'1.2-6' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detail-section">
+        <h3>Market Data</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Volume (24h)</span>
+            <span class="detail-value">${{ selectedCrypto.volume * selectedCrypto.vwap | number }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Low (24h)</span>
+            <span class="detail-value">${{ selectedCrypto.low | number:'1.2-6' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">VWAP</span>
+            <span class="detail-value">${{ selectedCrypto.vwap | number:'1.2-6' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Bid Quantity</span>
+            <span class="detail-value">{{ selectedCrypto.bidQty | number }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Ask Quantity</span>
+            <span class="detail-value">{{ selectedCrypto.askQty | number }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detail-action-buttons">
+        <button class="action-button trade-button">Trade Now</button>
+        <button class="action-button add-watchlist-button">Add to Watchlist</button>
+      </div>
+    </div>
+  </p-dialog>
 </div>
