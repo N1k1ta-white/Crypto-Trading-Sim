@@ -1,6 +1,9 @@
 package com.cryptoTrading.backend.clients;
 
 import com.cryptoTrading.backend.dto.CryptocurrencyDto;
+import com.cryptoTrading.backend.service.CryptoService;
+import com.cryptoTrading.backend.entity.Crypto;
+import com.cryptoTrading.backend.repository.CryptoInfoRepository;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -31,9 +34,6 @@ public class KrakenWebSocketClient extends WebSocketClient {
     private static final Logger logger = Logger.getLogger(KrakenWebSocketClient.class.getName());
     private static final int RECONNECT_DELAY_MS = 5000;
     private static final int CONNECTION_LOST_TIMEOUT = 10;
-    private static final String[] TRADING_PAIRS = {
-        "BTC/USD", "MATIC/USD", "ETH/USD", "ADA/USD", "XRP/USD"
-    };
     private static final String TICKER_CHANNEL = "ticker";
     private static final String SUBSCRIBE_METHOD = "subscribe";
     private static final String CHANNEL_PARAM = "channel";
@@ -48,7 +48,8 @@ public class KrakenWebSocketClient extends WebSocketClient {
     private boolean reconnectOnClose = true;
     private final SimpMessagingTemplate messagingTemplate;
 
-    Map<String, CryptocurrencyDto> cryptocurrencyDTOMap = new HashMap<>();
+    private final CryptoService cryptoService;
+    private final CryptoInfoRepository cryptoPricesRepository;
 
     private enum MessageType {
         HEARTBEAT("heartbeat"),
@@ -92,9 +93,13 @@ public class KrakenWebSocketClient extends WebSocketClient {
     }
 
     public KrakenWebSocketClient(@Value("${kraken.websocket.url}") String url, 
-                                    SimpMessagingTemplate messagingTemplate) throws Exception {
+                                    SimpMessagingTemplate messagingTemplate,
+                                    CryptoService cryptoService,
+                                    CryptoInfoRepository cryptoPricesRepository) throws Exception {
         super(new URI(url));
         this.messagingTemplate = messagingTemplate;
+        this.cryptoService = cryptoService;
+        this.cryptoPricesRepository = cryptoPricesRepository;
         this.setConnectionLostTimeout(CONNECTION_LOST_TIMEOUT);
     }
 
@@ -102,7 +107,10 @@ public class KrakenWebSocketClient extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake handshakedata) {
         logger.info("WebSocket connection opened. Status: " + handshakedata.getHttpStatus());
-        subscribeToTicker(TRADING_PAIRS);
+        subscribeToTicker(cryptoService.getAllCryptos().stream()
+                                                       .map(Crypto::getCode)
+                                                       .map(code -> code + "/USD")
+                                                       .toArray(String[]::new));
     }
 
     @Override
@@ -136,7 +144,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
     }
 
     public Collection<CryptocurrencyDto> fetchTradingPairs() {
-        return cryptocurrencyDTOMap.values();
+        return cryptoPricesRepository.getAllCryptocurrencyInfo();
     }
     
     private void processMessageByType(JsonObject messageData) {
@@ -175,7 +183,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
     private void handleTickerSnapshot(JsonElement obj) {
         try {
             CryptocurrencyDto cryptoDto = gson.fromJson(obj, CryptocurrencyDto[].class)[FIRST_ELEMENT];
-            cryptocurrencyDTOMap.put(cryptoDto.getSymbol(), cryptoDto);
+            cryptoPricesRepository.addCryptocurrencyInfo(cryptoDto);
             // logger.info("Received ticker snapshot");
         } catch (Exception e) {
             logger.warning("Error processing ticker update: " + e.getMessage());
@@ -185,18 +193,9 @@ public class KrakenWebSocketClient extends WebSocketClient {
     private void handleTickerUpdate(JsonElement obj) {
         try {
             CryptocurrencyDto newCryptoDto = gson.fromJson(obj, CryptocurrencyDto[].class)[FIRST_ELEMENT];
-            CryptocurrencyDto cryptoDto = cryptocurrencyDTOMap.get(newCryptoDto.getSymbol());
-
-            if (cryptoDto == null) {
-                logger.warning("Received update for unknown trading pair: " + newCryptoDto.getSymbol());
-                return;
-            }
-
-            cryptoDto = updateData(cryptoDto, newCryptoDto);
-            cryptocurrencyDTOMap.put(cryptoDto.getSymbol(), cryptoDto);
+            newCryptoDto = cryptoPricesRepository.updateCryptocurrencyInfo(newCryptoDto);
 
             messagingTemplate.convertAndSend("/update/crypto", newCryptoDto);
-
             // logger.info("Received ticker update");
         } catch (Exception e) {
             logger.warning("Error processing ticker update: " + e.getMessage());
@@ -205,23 +204,6 @@ public class KrakenWebSocketClient extends WebSocketClient {
 
     private void handleStatusMessage(JsonElement object) {
         logger.warning("Received status message: " + object);
-    }
-
-    private CryptocurrencyDto updateData(CryptocurrencyDto existingData, 
-                                        CryptocurrencyDto latestMarketData) {
-        Optional.ofNullable(latestMarketData.getBid()).ifPresent(existingData::setBid);
-        Optional.ofNullable(latestMarketData.getBidQty()).ifPresent(existingData::setBidQty);
-        Optional.ofNullable(latestMarketData.getAsk()).ifPresent(existingData::setAsk);
-        Optional.ofNullable(latestMarketData.getAskQty()).ifPresent(existingData::setAskQty);
-        Optional.ofNullable(latestMarketData.getLast()).ifPresent(existingData::setLast);
-        Optional.ofNullable(latestMarketData.getVolume()).ifPresent(existingData::setVolume);
-        Optional.ofNullable(latestMarketData.getVwap()).ifPresent(existingData::setVwap);
-        Optional.ofNullable(latestMarketData.getLow()).ifPresent(existingData::setLow);
-        Optional.ofNullable(latestMarketData.getHigh()).ifPresent(existingData::setHigh);
-        Optional.ofNullable(latestMarketData.getChange()).ifPresent(existingData::setChange);
-        Optional.ofNullable(latestMarketData.getChangePct()).ifPresent(existingData::setChangePct);
-
-        return existingData;
     }
 
     private void subscribeToTicker(String[] pairs) {
