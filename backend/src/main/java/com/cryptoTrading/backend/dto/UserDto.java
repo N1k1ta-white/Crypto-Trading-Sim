@@ -1,5 +1,6 @@
 package com.cryptoTrading.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ public class UserDto {
     private String password;
 
     @Email
-    @NotNull
     private String email;
+
+    private String token;
 }

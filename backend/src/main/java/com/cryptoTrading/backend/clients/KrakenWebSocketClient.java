@@ -176,7 +176,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
         try {
             CryptocurrencyDto cryptoDto = gson.fromJson(obj, CryptocurrencyDto[].class)[FIRST_ELEMENT];
             cryptocurrencyDTOMap.put(cryptoDto.getSymbol(), cryptoDto);
-            logger.info("Received ticker snapshot");
+            // logger.info("Received ticker snapshot");
         } catch (Exception e) {
             logger.warning("Error processing ticker update: " + e.getMessage());
         }
@@ -197,7 +197,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
 
             messagingTemplate.convertAndSend("/update/crypto", newCryptoDto);
 
-            logger.info("Received ticker update");
+            // logger.info("Received ticker update");
         } catch (Exception e) {
             logger.warning("Error processing ticker update: " + e.getMessage());
         }
