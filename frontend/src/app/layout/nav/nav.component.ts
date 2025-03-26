@@ -89,7 +89,6 @@ export class NavComponent {
   }
 
   getUserBalance(): number {
-    console.log(this.authService.currentUserValue);
     // Replace this with actual user balance from your service
     return this.authService.currentUserValue?.balance || 0;
   }

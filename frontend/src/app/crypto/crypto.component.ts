@@ -81,24 +81,7 @@ export class CryptoComponent implements OnInit, OnDestroy {
       this.isConnected = status;
     });
 
-    const themeToggle = document.getElementById('theme-toggle') as HTMLInputElement;
-
-    themeToggle.addEventListener('change', () => {
-      document.body.classList.toggle('dark-theme', themeToggle.checked);
-    });
-
-    // Optional: Persist theme preference in localStorage
-    const isDarkMode = localStorage.getItem('dark-theme') === 'true';
-    themeToggle.checked = isDarkMode;
-    document.body.classList.toggle('dark-theme', isDarkMode);
-
-    themeToggle.addEventListener('change', () => {
-      const isDark = themeToggle.checked;
-      document.body.classList.toggle('dark-theme', isDark);
-      localStorage.setItem('dark-theme', String(isDark));
-    });
-
-    // Subscribe to the theme service
+    // Subscribe to the theme service - keep only this for theme handling
     this.themeSubscription = this.themeService.darkMode$.subscribe(isDark => {
       this.darkMode = isDark;
     });
@@ -166,9 +149,5 @@ export class CryptoComponent implements OnInit, OnDestroy {
     const hue = Math.abs(hash) % 360;              // 0-359 degrees
     
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  }
-
-  toggleTheme() {
-    this.themeService.toggleTheme();
   }
 }

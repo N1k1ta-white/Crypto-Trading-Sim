@@ -9,18 +9,17 @@
   --text-primary: #2c3e50;
   --text-secondary: #7f8c8d;
   --text-subtitle: #7f8c8d;
-  --price-up: #27ae60;
-  --price-down: #e74c3c;
+  --price-up: #00a152;    /* Darker green for light mode */
+  --price-down: #d32f2f;  /* Darker red for light mode */
   --shadow-color: rgba(0, 0, 0, 0.08);
   --gradient-start: #3498db;
   --gradient-end: #2c3e50;
-  --positive-bg: rgba(46, 204, 113, 0.15);
-  --negative-bg: rgba(231, 76, 60, 0.15);
-  --neutral-bg: rgba(149, 165, 166, 0.15);
+  --positive-bg: rgba(46, 204, 113, 0.35); /* Increased opacity for light mode */
+  --negative-bg: rgba(231, 76, 60, 0.35);  /* Increased opacity for light mode */
+  --neutral-bg: rgba(149, 165, 166, 0.25);
 }
 
 /* Apply dark theme variables when dark-theme class is applied */
-/* This replaces the checkbox-based toggle approach */
 .dark-theme {
   --bg-primary: #1a1c1e;
   --bg-secondary: #2c3032;
@@ -31,87 +30,56 @@
   --text-primary: #e5e5e5;
   --text-secondary: #a0a0a0;
   --text-subtitle: #a0a0a0;
-  --price-up: #4cd987;
-  --price-down: #ff6b6b;
+  --price-up: #4cd987;    /* Brighter green for dark mode */
+  --price-down: #ff6b6b;  /* Brighter red for dark mode */
   --shadow-color: rgba(0, 0, 0, 0.2);
   --gradient-start: #4fa3e3;
   --gradient-end: #78a2c5;
-  --positive-bg: rgba(46, 204, 113, 0.2);
-  --negative-bg: rgba(231, 76, 60, 0.2);
-  --neutral-bg: rgba(149, 165, 166, 0.2);
+  --positive-bg: rgba(46, 204, 113, 0.4);  /* Increased opacity for dark mode */
+  --negative-bg: rgba(231, 76, 60, 0.4);   /* Increased opacity for dark mode */
+  --neutral-bg: rgba(149, 165, 166, 0.3);
 }
 
-/* System-preference based dark theme - keep this for initial load before Angular initializes */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light-mode-forced) {
-    --bg-primary: #1a1c1e;
-    --bg-secondary: #2c3032;
-    --bg-table-header: #2c3032;
-    --bg-table-hover: #2f3335;
-    --bg-card: #242729;
-    --border-color: #333;
-    --text-primary: #e5e5e5;
-    --text-secondary: #a0a0a0;
-    --text-subtitle: #a0a0a0;
-    --price-up: #4cd987;
-    --price-down: #ff6b6b;
-    --shadow-color: rgba(0, 0, 0, 0.2);
-    --gradient-start: #4fa3e3;
-    --gradient-end: #78a2c5;
-    --positive-bg: rgba(46, 204, 113, 0.2);
-    --negative-bg: rgba(231, 76, 60, 0.2);
-    --neutral-bg: rgba(149, 165, 166, 0.2);
-  }
-}
-
-/* Hide the checkbox but make it accessible */
-.theme-toggle {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
-}
-
-/* Theme toggle button style */
-.theme-toggle-label {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-  align-items: center;
-  background-color: var(--bg-secondary);
-  padding: 8px 16px;
-  border-radius: 20px;
-  cursor: pointer;
+/* Host element theming - add this at the top after your theme definitions */
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-weight: 500;
-  box-shadow: 0 2px 10px var(--shadow-color);
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  --gradient-start: #3498db; /* Brighter blue for light mode */
+  --gradient-end: #2c3e50; /* Darker blue for light mode */
 }
 
-.theme-toggle-label:hover {
-  filter: brightness(0.95);
+/* Adjust gradient colors for dark mode if needed */
+:host-context(.dark-theme), .dark-theme {
+  --gradient-start: #4fa3e3; /* Light blue for dark mode */
+  --gradient-end: #78a2c5; /* Lighter blue for dark mode */
 }
 
-/* Theme icons using CSS */
-.theme-toggle-label::before {
-  content: "🌙";
-  margin-right: 8px;
-  font-size: 1rem;
+/* Make sure nested elements also inherit theme colors */
+:host ::ng-deep .p-datatable {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
 }
 
-.theme-toggle:checked ~ .dashboard-container .theme-toggle-label::before {
-  content: "☀️";
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  background-color: var(--bg-table-header);
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
-/* Default theme text */
-.theme-toggle-label::after {
-  content: "Dark Mode";
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
 }
 
-.theme-toggle:checked ~ .dashboard-container .theme-toggle-label::after {
-  content: "Light Mode";
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  border-color: var(--border-color);
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+  background-color: var(--bg-table-hover);
 }
 
 /* Dashboard container styles */
@@ -138,9 +106,14 @@
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  /* Add a fallback color first */
+  color: var(--text-primary);
+  /* Then apply the gradient with better contrast colors */
   background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  /* Add text shadow for better visibility */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .subtitle {
@@ -261,7 +234,6 @@
   margin-right: 12px;
   font-weight: bold;
   color: white;
-  background-color: #3498db;
 }
 
 .asset-name {
@@ -282,8 +254,9 @@
   align-items: center;
   padding: 0.4rem 0.8rem;
   border-radius: 20px;
-  font-weight: 500;
+  font-weight: 600; /* Make text bolder */
   transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid transparent; /* Add border for better visibility */
 }
 
 .change-indicator.positive {
@@ -399,24 +372,122 @@ body {
   color: var(--text-primary);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-  max-width: 90%; /* Ensure the modal width is responsive */
+  /* Stronger shadow for better depth in light mode */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  max-width: 90%;
   width: auto;
+  /* Stronger border for light mode */
+  border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
+/* Make the dialog header stand out better */
+:host ::ng-deep .crypto-detail-dialog .p-dialog-header {
+  /* Use a slightly different background in light mode to create distinction */
+  background-color: #f5f7fa;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  /* Add subtle gradient to improve visibility */
+  background-image: linear-gradient(to bottom, #f5f7fa, #ffffff);
+}
+
+/* Fix dialog backdrop for better visibility */
+:host ::ng-deep .p-dialog-mask {
+  background-color: rgba(0, 0, 0, 0.5) ;
+  backdrop-filter: blur(2px) ;
+}
+
+/* Ensure dialog content has good contrast in light mode */
+:host ::ng-deep .crypto-detail-dialog .p-dialog-content {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  padding: 0;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+/* Make dialog sections more distinct in light mode */
+.detail-section {
+  margin-bottom: 1.5rem;
+  padding: 1.2rem;
+  border-bottom: 1px solid var(--border-color);
+  /* Add subtle background for better visibility in light mode */
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+}
+
+/* Add a more visible header for the dialog */
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.5rem 0;
+}
+
+/* Make the dialog header stand out better */
 :host ::ng-deep .crypto-detail-dialog .p-dialog-header {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
   border-bottom: 1px solid var(--border-color);
   padding: 1.5rem;
+  /* Add subtle gradient to improve visibility */
+  background-image: linear-gradient(to bottom, var(--bg-secondary), var(--bg-card));
 }
 
+/* Improve dialog content styling */
 :host ::ng-deep .crypto-detail-dialog .p-dialog-content {
   background-color: var(--bg-card);
   color: var(--text-primary);
   padding: 0;
   max-height: calc(100vh - 100px); /* Ensure the modal content fits within the viewport */
   overflow-y: auto; /* Add scrolling only if content exceeds the max height */
+}
+
+/* Improve the dialog modal backdrop */
+:host ::ng-deep .p-dialog-mask {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black regardless of theme */
+}
+
+/* Ensure dialog animations and transitions work properly */
+:host ::ng-deep .p-dialog {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Make detail sections pop more in light mode */
+.detail-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  /* Add subtle background for better visibility in light mode */
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+}
+
+/* Make detail items pop more in light mode */
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  border-radius: 6px;
+  /* Very subtle hover effect */
+  transition: background-color 0.2s ease;
+}
+
+.detail-item:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Ensure the dialog close button is visible in both modes */
+:host ::ng-deep .p-dialog-header-icon {
+  color: var(--text-primary) !important;
+  background-color: transparent !important;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  margin-left: 0.5rem;
+}
+
+:host ::ng-deep .p-dialog-header-icon:hover {
+  background-color: var(--bg-table-hover) !important;
 }
 
 .dialog-header {
