@@ -1,6 +1,27 @@
 import { Routes } from '@angular/router';
-import { CryptoComponent } from './crypto/crypto.component';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: CryptoComponent },
+  { 
+    path: 'login', 
+    loadComponent: () => import('./auth/login/login.component').then(m => m.LoginComponent),
+  },
+  { 
+    path: 'register', 
+    loadComponent: () => import('./auth/register/register.component').then(m => m.RegisterComponent),
+  },
+  { 
+    path: 'crypto', 
+    loadComponent: () => import('./crypto/crypto.component').then(m => m.CryptoComponent),
+    canActivate: [authGuard]
+  },
+  { 
+    path: '', 
+    redirectTo: '/crypto', 
+    pathMatch: 'full' 
+  },
+  { 
+    path: '**', 
+    redirectTo: '/login' 
+  }
 ];

@@ -1,0 +1,27 @@
+<div class="nav-container" [ngClass]="{'dark-theme': darkMode}">
+  <p-menubar [model]="menuItems">
+    <ng-template pTemplate="start">
+      <div class="app-logo">
+        CryptoSim
+      </div>
+    </ng-template>
+    <ng-template pTemplate="end">
+      <div class="nav-controls">
+        <button class="theme-toggle-button" (click)="toggleTheme()">
+          <i [class]="darkMode ? 'pi pi-sun' : 'pi pi-moon'"></i>
+        </button>
+        
+        <ng-container *ngIf="!authService.isLoggedIn(); else loggedIn">
+          <a routerLink="/login" class="auth-button login-button">Login</a>
+          <a routerLink="/register" class="auth-button signup-button">Sign Up</a>
+        </ng-container>
+        
+        <ng-template #loggedIn>
+          <button class="auth-button logout-button" (click)="logout()">
+            <i class="pi pi-sign-out"></i> Logout
+          </button>
+        </ng-template>
+      </div>
+    </ng-template>
+  </p-menubar>
+</div>

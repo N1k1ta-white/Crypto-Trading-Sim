@@ -1,0 +1,219 @@
+/* CSS Variables for theming - base light theme */
+:host {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9f9f9;
+  --bg-card: #ffffff;
+  --border-color: #eee;
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --price-up: #27ae60;
+  --price-down: #e74c3c;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --gradient-start: #3498db;
+  --gradient-end: #2c3e50;
+
+  display: block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Dark theme variables */
+:host-context(.dark-theme) {
+  --bg-primary: #1a1c1e;
+  --bg-secondary: #2c3032;
+  --bg-card: #242729;
+  --border-color: #333;
+  --text-primary: #e5e5e5;
+  --text-secondary: #a0a0a0;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --gradient-start: #4fa3e3;
+  --gradient-end: #78a2c5;
+}
+
+/* Nav container - changing to sticky positioning */
+.nav-container {
+  background-color: var(--bg-card);
+  box-shadow: 0 2px 15px var(--shadow-color);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky; 
+  top: 0;
+  z-index: 1000;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* PrimeNG Menubar styling */
+:host ::ng-deep .p-menubar {
+  padding: 0.75rem 2rem;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+/* Logo area */
+:host ::ng-deep .p-menubar .p-menubar-root-list {
+  gap: 1rem;
+}
+
+:host ::ng-deep .p-menuitem-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem !important;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep .p-menuitem-text,
+:host ::ng-deep .p-menuitem-icon {
+  color: var(--text-primary) !important;
+}
+
+:host ::ng-deep .p-menuitem:hover .p-menuitem-link {
+  background-color: var(--bg-secondary) !important;
+}
+
+:host ::ng-deep .p-menuitem-link .p-menuitem-icon {
+  margin-right: 0.5rem;
+}
+
+/* Active route styling */
+:host ::ng-deep .p-menuitem-active > .p-menuitem-link {
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.25);
+}
+
+:host ::ng-deep .p-menuitem-active > .p-menuitem-link .p-menuitem-text,
+:host ::ng-deep .p-menuitem-active > .p-menuitem-link .p-menuitem-icon {
+  color: white !important;
+}
+
+/* Logo styling */
+.app-logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-right: 2rem;
+  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Right side controls */
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Theme toggle button */
+.theme-toggle-button {
+  background: none;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+}
+
+.theme-toggle-button:hover {
+  background-color: var(--border-color);
+}
+
+.theme-toggle-button i {
+  font-size: 1.25rem;
+}
+
+/* Auth buttons */
+.auth-button {
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.login-button {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.login-button:hover {
+  background-color: var(--bg-secondary);
+}
+
+.signup-button,
+.logout-button {
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.25);
+}
+
+.signup-button:hover,
+.logout-button:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 6px 16px rgba(52, 152, 219, 0.35);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  :host ::ng-deep .p-menubar {
+    padding: 0.5rem 1rem;
+  }
+  
+  .app-logo {
+    font-size: 1.25rem;
+  }
+  
+  :host ::ng-deep .p-menubar-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+  }
+  
+  :host ::ng-deep .p-menubar-button:hover {
+    background-color: var(--border-color);
+  }
+  
+  /* Mobile menu */
+  :host ::ng-deep .p-menubar-root-list {
+    background-color: var(--bg-card);
+    box-shadow: 0 8px 20px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.5rem;
+  }
+  
+  .auth-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .nav-controls {
+    gap: 0.5rem;
+  }
+}
+
+/* Animation for theme switch */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.theme-toggle-button i {
+  animation: spin 0.5s ease;
+}

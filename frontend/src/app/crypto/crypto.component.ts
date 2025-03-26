@@ -6,6 +6,8 @@ import { env } from '../env';
 import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
+import { ThemeService } from '../services/theme.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-crypto',
@@ -22,10 +24,13 @@ export class CryptoComponent implements OnInit, OnDestroy {
   selectedCrypto: any = null;
   showDetailDialog: boolean = false;
   isConnected: boolean = false;
+  darkMode = false;
+  private themeSubscription!: Subscription;
 
   constructor(
     private webSocketService: WebSocketService,
-    private http: HttpClient
+    private http: HttpClient,
+    private themeService: ThemeService
   ) {}
   
   ngOnInit(): void {
@@ -53,6 +58,10 @@ export class CryptoComponent implements OnInit, OnDestroy {
           this.priceChangeStatus.set(newData.symbol, null);
         }, 1000);
       }
+
+      this.themeService.darkMode$.subscribe(isDark => {
+        this.darkMode = isDark;
+      });
       
       // Update the data
       this.crypto.set(newData.symbol, newData);
@@ -87,6 +96,11 @@ export class CryptoComponent implements OnInit, OnDestroy {
       const isDark = themeToggle.checked;
       document.body.classList.toggle('dark-theme', isDark);
       localStorage.setItem('dark-theme', String(isDark));
+    });
+
+    // Subscribe to the theme service
+    this.themeSubscription = this.themeService.darkMode$.subscribe(isDark => {
+      this.darkMode = isDark;
     });
   }
 
@@ -129,5 +143,32 @@ export class CryptoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     // Cleanup logic if needed
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
+    }
+  }
+
+  /**
+   * Generates a consistent color based on the cryptocurrency symbol
+   * @param symbol The cryptocurrency symbol
+   * @returns A hex color string
+   */
+  generateColorFromSymbol(symbol: string): string {
+    // Simple hash function to generate a number from the symbol
+    let hash = 0;
+    for (let i = 0; i < symbol.length; i++) {
+      hash = symbol.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    // Generate a vibrant color from the hash
+    const saturation = 75 + (Math.abs(hash) % 20); // 75-95%
+    const lightness = 45 + (Math.abs(hash) % 10);  // 45-55%
+    const hue = Math.abs(hash) % 360;              // 0-359 degrees
+    
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 }

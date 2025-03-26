@@ -1,0 +1,45 @@
+<div class="app-container">
+  <!-- Account header with dark/light mode toggle -->
+  <header class="app-header">
+    <div class="left-section">
+      <div class="account-info">
+        <div class="account-avatar">
+          <span>U</span>
+        </div>
+        <div class="account-details">
+          <h3 class="account-name">Username</h3>
+          <span class="account-balance">${{ userBalance | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-section">
+      <div class="quick-trade">
+        <div class="trade-inputs">
+          <select class="trade-select" [(ngModel)]="quickTradeSymbol">
+            <option value="">Select crypto</option>
+            <option *ngFor="let crypto of availableCryptos" [value]="crypto.symbol">
+              {{ crypto.symbol }}
+            </option>
+          </select>
+          <select class="trade-action-select" [(ngModel)]="quickTradeType">
+            <option value="BUY">Buy</option>
+            <option value="SELL">Sell</option>
+          </select>
+          <input type="number" class="trade-amount" placeholder="Amount" [(ngModel)]="quickTradeAmount">
+          <button class="quick-trade-button" (click)="executeQuickTrade()">Trade</button>
+        </div>
+      </div>
+      
+      <div class="theme-toggle-container">
+        <input type="checkbox" id="theme-toggle" class="theme-toggle" [(ngModel)]="darkMode" (change)="toggleTheme()">
+        <label for="theme-toggle" class="theme-toggle-label"></label>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content area for router outlet -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

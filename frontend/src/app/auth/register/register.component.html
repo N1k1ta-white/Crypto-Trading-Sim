@@ -1,0 +1,100 @@
+<div class="dashboard-container" [ngClass]="{'dark-theme': darkMode}">
+  <div class="dashboard-header">
+    <h1>Create Account</h1>
+    <p class="subtitle">Start trading crypto risk-free today</p>
+  </div>
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="logo">
+        <i class="pi pi-chart-line"></i>
+      </div>
+      <h2>CryptoSim Registration</h2>
+    </div>
+    
+    <div class="card-content">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        <div class="form-grid">
+          <!-- Username field -->
+          <div class="form-field">
+            <label for="username">Username</label>
+            <div class="input-wrapper">
+              <i class="pi pi-user"></i>
+              <input 
+                id="username" 
+                type="text"
+                formControlName="username" 
+                placeholder="Choose a username"
+              />
+            </div>
+            <small *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="error-message">
+              Username must be at least 3 characters
+            </small>
+          </div>
+          
+          <!-- Email field -->
+          <div class="form-field">
+            <label for="email">Email Address</label>
+            <div class="input-wrapper">
+              <i class="pi pi-envelope"></i>
+              <input 
+                id="email" 
+                type="email"
+                formControlName="email" 
+                placeholder="Enter your email"
+              />
+            </div>
+            <small *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error-message">
+              Please enter a valid email address
+            </small>
+          </div>
+          
+          <!-- Password field -->
+          <div class="form-field">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <i class="pi pi-lock"></i>
+              <input 
+                id="password" 
+                type="password"
+                formControlName="password"
+                placeholder="Create a secure password"
+              />
+            </div>
+            <small *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error-message">
+              Password must be at least 6 characters
+            </small>
+          </div>
+        </div>
+        
+        <!-- Action buttons -->
+        <div class="action-buttons">
+          <button 
+            type="submit"
+            class="action-button trade-button"
+            [disabled]="registerForm.invalid || isLoading">
+            <i class="pi pi-check"></i> Create Account
+          </button>
+          
+          <button 
+            type="button" 
+            class="action-button add-watchlist-button"
+            routerLink="/login">
+            <i class="pi pi-sign-in"></i> Log In Instead
+          </button>
+        </div>
+        
+        <div class="terms-notice">
+          By creating an account, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+        </div>
+        
+        <div *ngIf="isLoading" class="loading-indicator">
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>Creating your account...</span>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <p-toast position="top-right"></p-toast>
+</div>

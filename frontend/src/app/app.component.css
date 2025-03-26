@@ -1,0 +1,226 @@
+:host {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f7fa;
+  --text-primary: #333;
+  --text-secondary: #6c757d;
+  --border-color: #dfe3e8;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --accent-color: #3366ff;
+  --price-up: #00c853;
+  --price-down: #ff3d00;
+  --gradient-start: #3366ff;
+  --gradient-end: #00c853;
+}
+
+:host-context(.dark-theme) {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --border-color: #333;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --accent-color: #4d7aff;
+  --gradient-start: #4d7aff;
+  --gradient-end: #00e676;
+}
+
+.app-container {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px var(--shadow-color);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.left-section, .right-section {
+  display: flex;
+  align-items: center;
+}
+
+.account-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.account-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.account-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-name {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.account-balance {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--price-up);
+}
+
+.quick-trade {
+  margin-right: 2rem;
+}
+
+.trade-inputs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.trade-select,
+.trade-action-select,
+.trade-amount {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.quick-trade-button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  background-color: var(--price-up);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-trade-button:hover {
+  filter: brightness(1.1);
+}
+
+.theme-toggle-container {
+  position: relative;
+}
+
+.theme-toggle {
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.theme-toggle-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px;
+  width: 60px;
+  height: 28px;
+  background: linear-gradient(to right, #2c3e50, #4a6990);
+  border-radius: 30px;
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Toggle knob with icon */
+.theme-toggle-label::after {
+  content: "🌙";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  top: 3px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-size: 12px;
+}
+
+/* Light mode (checked) style */
+.theme-toggle:checked + .theme-toggle-label {
+  background: linear-gradient(to right, #ff9966, #ff5e62);
+}
+
+.theme-toggle:checked + .theme-toggle-label::after {
+  content: "☀️";
+  transform: translateX(32px);
+}
+
+/* Hover and active states */
+.theme-toggle-label:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.theme-toggle-label:active {
+  transform: scale(0.95);
+}
+
+/* Focus state for accessibility */
+.theme-toggle:focus + .theme-toggle-label {
+  box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5), inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.main-content {
+  padding: 2rem;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 992px) {
+  .app-header {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .left-section, .right-section {
+    width: 100%;
+  }
+  
+  .right-section {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .trade-inputs {
+    flex-wrap: wrap;
+  }
+  
+  .trade-select, .trade-action-select, .trade-amount {
+    flex: 1 0 45%;
+  }
+  
+  .quick-trade-button {
+    flex: 1 0 100%;
+    margin-top: 0.5rem;
+  }
+}

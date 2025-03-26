@@ -1,0 +1,519 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Main container - centered vertically and horizontally */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(44, 62, 80, 0.1));
+}
+
+.registration-wrapper {
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+/* Brand section - simplified */
+.brand-section {
+  margin-bottom: 2rem;
+}
+
+.brand-section .logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.brand-section .logo i {
+  font-size: 1.8rem;
+  color: white;
+}
+
+.brand-section h1 {
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-section .tagline {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+/* Card styling - simplified */
+:host ::ng-deep .p-card {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px var(--shadow-color), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+:host ::ng-deep .p-card .p-card-content {
+  padding: 1.5rem;
+}
+
+/* Form styling - simpler and centered */
+.field {
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* Input fields - simplified */
+:host ::ng-deep input,
+:host ::ng-deep .p-password input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-card); /* Using card background instead of primary */
+  color: var(--text-primary);
+}
+
+:host ::ng-deep .p-inputgroup {
+  display: flex;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Improved input fields with centered icons */
+:host ::ng-deep .p-inputgroup {
+  display: flex;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* Center icons in input groups */
+:host ::ng-deep .p-inputgroup-addon,
+:host ::ng-deep .p-inputgroup .p-inputgroup-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-right: none;
+  color: var(--text-secondary);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05); /* Subtle shadow for definition */
+}
+
+/* Fix password icon alignment */
+:host ::ng-deep .p-password i,
+:host ::ng-deep .p-password .p-password-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Center icons in buttons */
+:host ::ng-deep .p-button .p-button-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+}
+
+:host ::ng-deep .p-button.p-button-icon-only .p-button-icon {
+  margin-right: 0;
+}
+
+/* Center validation icons */
+:host ::ng-deep .p-field-icon {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+/* Form field with icon */
+.field-with-icon {
+  position: relative;
+}
+
+.field-with-icon i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.field-with-icon i.icon-left {
+  left: 0.75rem;
+}
+
+.field-with-icon i.icon-right {
+  right: 0.75rem;
+}
+
+.field-with-icon input {
+  padding-left: 2.5rem;
+}
+
+/* Form header - centered */
+.form-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+.form-header p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* Button styling - simplified */
+:host ::ng-deep .p-button {
+  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem;
+  color: white;
+  font-weight: 600;
+}
+
+:host ::ng-deep .create-account-button {
+  width: 100%;
+}
+
+/* Form actions - centered */
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+/* Links and notices - centered */
+.login-link, .terms-notice {
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.terms-notice {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+/* Loading overlay - simplified */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(var(--bg-primary-rgb), 0.8);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  z-index: 10;
+}
+
+.spinner-container {
+  text-align: center;
+  background-color: var(--bg-card);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Inherit base theme variables from crypto component */
+.dashboard-container {
+  padding: 2rem;
+  min-height: calc(100vh - 4rem);
+  width: calc(100% - 4rem);
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #3498db, #2c3e50); /* Using explicit colors instead of variables */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1); /* Add subtle shadow for better visibility */
+}
+
+.subtitle {
+  color: var(--text-subtitle);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px var(--shadow-color);
+  overflow: hidden;
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-header {
+  padding: 1.5rem 2rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3498db, #2c3e50); /* Using explicit colors instead of variables */
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.logo i {
+  color: white; /* Explicitly set icon color */
+  font-size: 1.2rem; /* Make icon more visible */
+  display: flex; /* Ensure proper display */
+}
+
+.card-content {
+  padding: 2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper i {
+  position: absolute;
+  left: 1rem;
+  color: var(--text-secondary);
+}
+
+.form-field input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 2.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-card); /* Change from bg-primary to bg-card */
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Fix for dark mode input fields */
+.form-field input:focus {
+  border-color: var(--gradient-start);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25); /* More prominent focus indicator */
+  background-color: var(--bg-card); /* Maintain background color on focus */
+}
+
+/* Fix autofill background color in dark mode */
+.form-field input:-webkit-autofill,
+.form-field input:-webkit-autofill:hover, 
+.form-field input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text-primary);
+  -webkit-box-shadow: 0 0 0px 1000px var(--bg-card) inset;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: var(--text-primary);
+}
+
+/* Maintain dark mode styling when input has content */
+.dark-theme .form-field input {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.form-field input:focus {
+  border-color: var(--gradient-start);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25); /* More prominent focus indicator */
+}
+
+.error-message {
+  color: var(--price-down);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.action-button {
+  flex: 1;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.trade-button {
+  background: linear-gradient(135deg, #3498db, #2c3e50); /* Using explicit gradient instead of variable */
+  color: white; /* Explicit white text color */
+  box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3); /* Add visible shadow */
+}
+
+.trade-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2980b9, #1e2b37); /* Slightly darker gradient on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
+}
+
+.trade-button i {
+  color: white; /* Ensure icon is visible */
+}
+
+.add-watchlist-button {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.add-watchlist-button:hover {
+  background-color: var(--bg-table-hover);
+}
+
+.terms-notice {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
+
+.terms-notice a {
+  color: var(--gradient-start);
+  text-decoration: none;
+}
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: var(--text-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .brand-section .logo {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .brand-section h1 {
+    font-size: 1.8rem;
+  }
+  
+  .dashboard-container {
+    padding: 1rem;
+    width: calc(100% - 2rem);
+  }
+  
+  .dashboard-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .card-header, .card-content {
+    padding: 1rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+}

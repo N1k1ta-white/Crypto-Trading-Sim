@@ -1,7 +1,4 @@
-<input type="checkbox" id="theme-toggle" class="theme-toggle">
-
-<div class="dashboard-container">
-  <label for="theme-toggle" class="theme-toggle-label"></label>
+<div class="dashboard-container" [ngClass]="{'dark-theme': darkMode}">
   
   <div class="dashboard-header">
     <h1>Crypto Trading Dashboard</h1>
@@ -17,7 +14,7 @@
       </div>
     </div>
     
-    <p-table [value]="cryptoArray" [responsive]="true" styleClass="crypto-table">
+    <p-table [value]="cryptoArray" [responsive]="true" styleClass="crypto-table" [ngClass]="{'dark-table': darkMode}">
       <ng-template pTemplate="header">
         <tr>
           <th>Asset</th>
@@ -30,7 +27,7 @@
       <ng-template pTemplate="body" let-crypto>
         <tr (click)="showDetails(crypto)" class="crypto-row">
           <td class="asset-cell">
-            <div class="crypto-icon" [attr.data-symbol]="crypto.symbol">
+            <div class="crypto-icon" [style.background-color]="generateColorFromSymbol(crypto.symbol)" [attr.data-symbol]="crypto.symbol">
               {{ crypto.symbol.slice(0,1) }}
             </div>
             <span class="asset-name">{{ crypto.symbol }}</span>
@@ -57,11 +54,13 @@
     [resizable]="false"
     [draggable]="true"
     [style]="{width: '90%', maxWidth: '600px'}"
-    styleClass="crypto-detail-dialog" *ngIf="selectedCrypto">
+    styleClass="crypto-detail-dialog" 
+    [ngClass]="{'dark-dialog': darkMode}"
+    *ngIf="selectedCrypto">
     
     <ng-template pTemplate="header">
       <div class="dialog-header">
-        <div class="crypto-icon-large" [attr.data-symbol]="selectedCrypto.symbol">
+        <div class="crypto-icon-large" [style.background-color]="generateColorFromSymbol(selectedCrypto.symbol)" [attr.data-symbol]="selectedCrypto.symbol">
           {{ selectedCrypto.symbol.slice(0,1) }}
         </div>
         <h2>{{ selectedCrypto.symbol }} Details</h2>
