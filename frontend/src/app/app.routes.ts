@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { TradeComponent } from './trade/trade.component';
 
 export const routes: Routes = [
   { 
@@ -14,6 +15,10 @@ export const routes: Routes = [
     path: 'crypto', 
     loadComponent: () => import('./crypto/crypto.component').then(m => m.CryptoComponent),
     canActivate: [authGuard]
+  },
+  { 
+    path: 'trade', 
+    component: TradeComponent 
   },
   { 
     path: '', 

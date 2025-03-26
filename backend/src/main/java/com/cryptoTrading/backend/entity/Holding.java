@@ -30,14 +30,14 @@ public class Holding {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 30, scale = 20)
     private BigDecimal averagePricing;
 
     @ManyToOne(targetEntity = Crypto.class, optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Crypto crypto;
 
-    @Column
+    @Column(nullable = false, precision = 30, scale = 20)
     private BigDecimal amount;
 
     @ManyToOne(targetEntity = User.class, optional = false, fetch = FetchType.LAZY)

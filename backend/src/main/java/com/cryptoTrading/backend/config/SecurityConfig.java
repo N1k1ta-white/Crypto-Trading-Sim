@@ -13,11 +13,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(authorizeHttpRequests ->
                 authorizeHttpRequests
-                    .requestMatchers("/api/user/register").permitAll()
-                    .requestMatchers("/api/user/login").permitAll()
-                    .requestMatchers("/api/crypto/**").permitAll()
-                    .requestMatchers("/ws").permitAll()
-                    .anyRequest().authenticated()
+                    .anyRequest().permitAll()
             )
             .csrf(csrf -> csrf.disable())
             .formLogin(login -> login.disable())

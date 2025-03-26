@@ -3,11 +3,10 @@ package com.cryptoTrading.backend.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import com.cryptoTrading.backend.annotation.CurrentUserId;
 import com.cryptoTrading.backend.dto.UserDto;
-import com.cryptoTrading.backend.entity.User;
-import com.cryptoTrading.backend.mapper.UserMapper;
+import com.cryptoTrading.backend.exceptions.UnauthorizedOperationException;
 import com.cryptoTrading.backend.service.UserService;
 
 import jakarta.validation.Valid;
@@ -40,22 +39,42 @@ public class UserController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getUserById(
+            @PathVariable Long id, 
+            @CurrentUserId Long currentUserId) {
+        // Check if user is accessing their own record or is an admin
+        if (!id.equals(currentUserId)) {
+            throw new UnauthorizedOperationException("access", "user/" + id);
+        }
         return ResponseEntity.ok(userService.fetchUserById(id));
     }
     
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
+        // In a real app, this would likely be restricted to admins
         return ResponseEntity.ok(userService.getAllUsers());
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable Long id, 
+            @RequestBody UserDto userDto,
+            @CurrentUserId Long currentUserId) {
+        // Check if user is updating their own record
+        if (!id.equals(currentUserId)) {
+            throw new UnauthorizedOperationException("update", "user/" + id);
+        }
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable Long id,
+            @CurrentUserId Long currentUserId) {
+        // Check if user is deleting their own record
+        if (!id.equals(currentUserId)) {
+            throw new UnauthorizedOperationException("delete", "user/" + id);
+        }
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

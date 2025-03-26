@@ -3,7 +3,12 @@ package com.cryptoTrading.backend.dto;
 import java.math.BigDecimal;
 
 import com.cryptoTrading.backend.enums.TradeType;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +21,18 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class TradeRequest {
+    @NotNull
+    @NotBlank
     private String symbol;
-    private TradeType tradeType;
+
+    @NotNull
+    private String tradeType;
+
+    @NotNull
+    @Positive
     private BigDecimal fixedPrice;
+
+    @NotNull
+    @Positive
     private BigDecimal amount;
 }

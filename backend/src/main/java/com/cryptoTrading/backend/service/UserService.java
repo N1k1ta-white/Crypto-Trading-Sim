@@ -1,11 +1,16 @@
 package com.cryptoTrading.backend.service;
 
+import com.cryptoTrading.backend.exceptions.InsufficientFundsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.authentication.BadCredentialsException;
 
 import com.cryptoTrading.backend.dto.UserDto;
 import com.cryptoTrading.backend.entity.User;
+import com.cryptoTrading.backend.exceptions.AuthenticationException;
+import com.cryptoTrading.backend.exceptions.DuplicateResourceException;
+import com.cryptoTrading.backend.exceptions.ResourceNotFoundException;
+import com.cryptoTrading.backend.exceptions.UnauthorizedOperationException;
 import com.cryptoTrading.backend.mapper.UserMapper;
 import com.cryptoTrading.backend.repository.UserRepository;
 import com.cryptoTrading.backend.config.JwtService;
@@ -15,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +32,11 @@ public class UserService {
 
     public UserDto registerUser(UserDto userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
+            throw new DuplicateResourceException("User", "username", userDto.getUsername());
         }
 
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new DuplicateResourceException("User", "email", userDto.getEmail());
         }
 
         User user = userMapper.dtoToUser(userDto);
@@ -44,10 +47,10 @@ public class UserService {
     
     public UserDto authenticateUser(UserDto userDto) {
         User user = userRepository.findByUsername(userDto.getUsername())
-            .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
+            .orElseThrow(() -> new AuthenticationException("Invalid username or password"));
             
         if (!passwordEncoder.matches(userDto.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Invalid username or password");
+            throw new AuthenticationException("Invalid username or password");
         }
         
         String token = jwtService.generateToken(user, user.getId());
@@ -74,14 +77,14 @@ public class UserService {
         if (userDto.getUsername() != null && 
             !userDto.getUsername().equals(existingUser.getUsername())) {
             if (userRepository.existsByUsername(userDto.getUsername())) {
-                throw new IllegalArgumentException("Username already exists");
+                throw new DuplicateResourceException("User", "username", userDto.getUsername());
             }
             existingUser.setUsername(userDto.getUsername());
         }
         
         if (userDto.getEmail() != null && !userDto.getEmail().equals(existingUser.getEmail())) {
             if (userRepository.existsByEmail(userDto.getEmail())) {
-                throw new IllegalArgumentException("Email already exists");
+                throw new DuplicateResourceException("User", "email", userDto.getEmail());
             }
             existingUser.setEmail(userDto.getEmail());
         }
@@ -95,7 +98,7 @@ public class UserService {
     
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new EntityNotFoundException("User not found with id: " + id);
+            throw new ResourceNotFoundException("User", "id", id);
         }
         userRepository.deleteById(id);
     }
@@ -106,6 +109,21 @@ public class UserService {
 
     public User getUserByIdInternal(Long id) {
         return userRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+    }
+
+    public void addBalance(Long id, BigDecimal amount) {
+        User user = getUserByIdInternal(id);
+        user.setBalance(user.getBalance().add(amount));
+        userRepository.save(user);
+    }
+
+    public void removeBalance(Long id, BigDecimal amount) {
+        User user = getUserByIdInternal(id);
+        if (user.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientFundsException("Insufficient balance to remove");
+        }
+        user.setBalance(user.getBalance().subtract(amount));
+        userRepository.save(user);
     }
 }

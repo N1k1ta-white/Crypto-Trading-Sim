@@ -1,0 +1,778 @@
+/* Root variables to match existing theme */
+:root {
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ebedf0;
+  --bg-card: #ffffff;
+  --bg-table-header: #f0f2f5;
+  --bg-table-hover: #f5f7fa;
+  --text-primary: #333333;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --price-up: #16a34a;
+  --price-down: #dc2626;
+  --positive-bg: rgba(22, 163, 74, 0.1);
+  --negative-bg: rgba(220, 38, 38, 0.1);
+  --neutral-bg: rgba(107, 114, 128, 0.1);
+  --gradient-start: #3498db;
+  --gradient-end: #2c3e50;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark theme variables */
+.dark-theme {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #2d2d2d;
+  --bg-table-header: #252525;
+  --bg-table-hover: #333333;
+  --text-primary: #f0f0f0;
+  --text-secondary: #a0a0a0;
+  --border-color: #444444;
+  --shadow-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Main container */
+.trade-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px);
+  padding: 2rem 1rem;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
+}
+
+/* Card styling to match login/register */
+:host ::ng-deep .trade-card {
+  width: 100%;
+  max-width: 780px; /* Increased from 580px to accommodate columns */
+  border-radius: 16px !important;
+  overflow: hidden;
+  background-color: var(--bg-card) !important;
+  box-shadow: 0 8px 30px var(--shadow-color) !important;
+  transition: all 0.3s ease;
+  border: none !important;
+}
+
+:host ::ng-deep .trade-card .p-card-body {
+  padding: 0;
+}
+
+/* Card header */
+:host ::ng-deep .card-header {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  color: var(--text-primary);
+  padding: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary); /* Ensure text is always white, regardless of theme */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Add subtle text shadow for better contrast */
+}
+
+/* Card content */
+.card-content {
+  padding: 1.5rem;
+}
+
+/* Column layout for window */
+.column-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Create two equal columns */
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.left-column, .right-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.right-column {
+  background-color: rgba(52, 152, 219, 0.05);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(52, 152, 219, 0.1);
+}
+
+.column-divider {
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--border-color), transparent);
+  margin: 0 1rem;
+}
+
+/* Market info section */
+.market-info {
+  margin-bottom: 1.5rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.market-info h3 {
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.market-info h3::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--gradient-start);
+  margin-right: 8px;
+}
+
+.market-data-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.market-data-item:hover {
+  background-color: rgba(52, 152, 219, 0.05);
+}
+
+.market-data-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.market-data-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.market-data-value.positive {
+  color: var(--price-up);
+  display: flex;
+  align-items: center;
+}
+
+.market-data-value.positive::before {
+  content: "↑";
+  margin-right: 4px;
+}
+
+.market-data-value.negative {
+  color: var(--price-down);
+  display: flex;
+  align-items: center;
+}
+
+.market-data-value.negative::before {
+  content: "↓";
+  margin-right: 4px;
+}
+
+/* Placeholder styles for when no crypto is selected */
+.market-info-placeholder {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  background-color: rgba(52, 152, 219, 0.02);
+}
+
+.placeholder-text {
+  color: var(--text-secondary);
+  font-style: italic;
+  text-align: center;
+}
+
+/* Form styling */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+/* Custom styling for native select element */
+.custom-select {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+  min-height: 44px;
+  background-color: rgba(52, 152, 219, 0.05);
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 1rem;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+.custom-select:focus {
+  outline: none;
+  border-color: var(--gradient-start);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+  background-color: rgba(52, 152, 219, 0.08);
+}
+
+.custom-select:hover {
+  border-color: var(--gradient-start);
+  background-color: rgba(52, 152, 219, 0.08);
+}
+
+.custom-select option {
+  padding: 0.85rem 1.25rem;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* Styling for InputNumber */
+:host ::ng-deep .custom-input-number .p-inputnumber {
+  width: 100%;
+}
+
+:host ::ng-deep .custom-input-number .p-inputnumber-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+:host ::ng-deep .custom-input-number .p-inputnumber-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+:host ::ng-deep .custom-input-number .p-inputnumber-input:focus {
+  outline: none;
+  border-color: var(--gradient-start);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+}
+
+:host ::ng-deep .custom-input-number .p-inputnumber-button {
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  width: 2.5rem;
+}
+
+:host ::ng-deep .custom-input-number .p-inputnumber-button:hover {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+:host ::ng-deep .custom-input-number .p-inputnumber-button-up {
+  border-top-right-radius: 8px;
+  border-bottom: none;
+}
+
+:host ::ng-deep .custom-input-number .p-inputnumber-button-down {
+  border-bottom-right-radius: 8px;
+}
+
+:host ::ng-deep .p-inputnumber.p-invalid.p-component > .p-inputtext {
+  border-color: var(--price-down);
+}
+
+/* Fetch button styling to match login/register buttons */
+:host ::ng-deep .fetch-button .p-button {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  border: none;
+  border-radius: 24px; /* Increased border radius for pill-like shape */
+  padding: 0.9rem 1.5rem; /* Slightly increased padding */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+  transition: all 0.3s ease;
+  overflow: hidden; /* Ensures content doesn't spill out of rounded corners */
+  position: relative; /* For hover effect positioning */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:host ::ng-deep .fetch-button .p-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: skewX(-20deg) translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+:host ::ng-deep .fetch-button .p-button:hover:not(:disabled)::before {
+  transform: skewX(-20deg) translateX(100%);
+}
+
+:host ::ng-deep .fetch-button .p-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2980b9, #1e2b37);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(52, 152, 219, 0.4);
+}
+
+:host ::ng-deep .fetch-button .p-button:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+}
+
+:host ::ng-deep .fetch-button .p-button .p-button-label {
+  position: relative; /* Ensure text stays above the gradient overlay */
+  display: inline-block;
+}
+
+:host ::ng-deep .fetch-button.buy-button .p-button {
+  background: linear-gradient(135deg, #2563eb, #1e40af); /* Blue gradient for buy */
+}
+
+:host ::ng-deep .fetch-button.sell-button .p-button {
+  background: linear-gradient(135deg, #ef4444, #b91c1c); /* Red gradient for sell */
+}
+
+/* Confirm button styling to match login/register buttons */
+:host ::ng-deep .confirm-button .p-button {
+  background: linear-gradient(to right, var(--price-up), #15803d);
+  border: none;
+  border-radius: 24px; /* Increased border radius for pill-like shape */
+  padding: 0.9rem 1.5rem; /* Slightly increased padding */
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
+  overflow: hidden; /* Ensures content doesn't spill out of rounded corners */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:host ::ng-deep .confirm-button .p-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: skewX(-20deg) translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+:host ::ng-deep .confirm-button .p-button:hover:not(:disabled)::before {
+  transform: skewX(-20deg) translateX(100%);
+}
+
+:host ::ng-deep .confirm-button .p-button:hover:not(:disabled) {
+  background: linear-gradient(to right, #15803d, #166534);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(22, 163, 74, 0.4);
+}
+
+:host ::ng-deep .confirm-button .p-button:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.4);
+}
+
+:host ::ng-deep .confirm-button .p-button .p-button-label {
+  position: relative;
+  display: inline-block;
+}
+
+/* Column button layout */
+.button-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.button-column .button-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: -0.25rem;
+}
+
+/* Trade summary section */
+.trade-summary {
+  margin-top: 1.5rem;
+  padding: 1.5rem; /* Slightly bigger padding */
+  border-radius: 12px;
+  background-color: var(--bg-secondary);
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Price display */
+.price-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem; /* Slightly increased */
+  padding: 0.5rem 1rem;
+  background-color: rgba(22, 163, 74, 0.05);
+  border-radius: 8px;
+}
+
+.price-label {
+  font-weight: 600; /* Bolder */
+  color: var(--text-secondary);
+  font-size: 1.1rem; /* Larger */
+}
+
+.price-value {
+  font-size: 1.5rem; /* Bigger */
+  font-weight: 700;
+  color: var(--price-up);
+}
+
+/* Countdown styling */
+.countdown {
+  margin-bottom: 1.2rem;
+}
+
+.countdown-progress {
+  height: 8px;
+  background-color: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.countdown-bar {
+  display: block;
+  height: 100%;
+  background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+  border-radius: 4px;
+  transition: width 1s linear;
+}
+
+.countdown-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* Confirm button styling */
+:host ::ng-deep .confirm-button .p-button {
+  background-color: var(--price-up);
+  border: none;
+  border-radius: 24px; /* Increased border radius for pill-like shape */
+  padding: 0.9rem 1.5rem; /* Slightly increased padding */
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.3);
+  overflow: hidden; /* Ensures content doesn't spill out of rounded corners */
+}
+
+:host ::ng-deep .confirm-button .p-button:hover:not(:disabled) {
+  background-color: #15803d;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(22, 163, 74, 0.4);
+}
+
+:host ::ng-deep .confirm-button .p-button:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(22, 163, 74, 0.4);
+}
+
+/* Enhanced Toast Message Styling */
+:host ::ng-deep .p-toast {
+  opacity: 0.98;
+}
+
+:host ::ng-deep .p-toast .p-toast-message {
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  border: none;
+  margin-bottom: 1rem;
+}
+
+:host ::ng-deep .p-toast .p-toast-message-content {
+  padding: 1.2rem 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .p-toast .p-toast-message-icon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+}
+
+:host ::ng-deep .p-toast .p-toast-summary {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 0.2rem;
+}
+
+:host ::ng-deep .p-toast .p-toast-detail {
+  font-size: 0.95rem;
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+/* Custom styling for each toast type */
+:host ::ng-deep .p-toast .p-toast-message.p-toast-message-info {
+  background: linear-gradient(to right, rgba(52, 152, 219, 0.95), rgba(52, 152, 219, 0.85));
+  color: #fff;
+}
+
+:host ::ng-deep .p-toast .p-toast-message.p-toast-message-success {
+  background: linear-gradient(to right, rgba(22, 163, 74, 0.95), rgba(22, 163, 74, 0.85));
+  color: #fff;
+}
+
+:host ::ng-deep .p-toast .p-toast-message.p-toast-message-warn {
+  background: linear-gradient(to right, rgba(245, 158, 11, 0.95), rgba(245, 158, 11, 0.85));
+  color: #fff;
+}
+
+:host ::ng-deep .p-toast .p-toast-message.p-toast-message-error {
+  background: linear-gradient(to right, rgba(220, 38, 38, 0.95), rgba(185, 28, 28, 0.85));
+  color: #fff;
+  border-left: 4px solid rgba(250, 250, 250, 0.5);
+}
+
+/* Toast message animations */
+:host ::ng-deep .p-toast .p-toast-message {
+  animation: slideIn 0.3s ease-out, fadeIn 0.3s ease-out;
+  transform-origin: top center;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); }
+  to { transform: translateY(0); }
+}
+
+/* Close button styling */
+:host ::ng-deep .p-toast .p-toast-icon-close {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  right: 0.75rem;
+  top: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+:host ::ng-deep .p-toast .p-toast-icon-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Dark theme overrides for toast if needed */
+.dark-theme :host ::ng-deep .p-toast .p-toast-message {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark theme adjustments */
+.dark-theme :host ::ng-deep .card-header {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme :host ::ng-deep .trade-card {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark-theme :host ::ng-deep .custom-input-number .p-inputnumber-input {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-theme :host ::ng-deep .custom-input-number .p-inputnumber-button {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-theme :host ::ng-deep .custom-input-number .p-inputnumber-button:hover {
+  background-color: rgba(52, 152, 219, 0.2);
+  color: var(--text-primary);
+}
+
+.dark-theme .trade-summary {
+  background-color: var(--bg-secondary);
+}
+
+/* Fix select issues in dark mode */
+.dark-theme :host ::ng-deep .custom-dropdown .p-select-panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+}
+
+.dark-theme :host ::ng-deep .custom-dropdown .p-select-items-wrapper {
+  background-color: var(--bg-card);
+}
+
+.dark-theme :host ::ng-deep .custom-dropdown .p-select-item {
+  color: var(--text-primary);
+}
+
+.dark-theme :host ::ng-deep .custom-dropdown .p-select-item:hover {
+  background-color: var(--bg-secondary);
+}
+
+.dark-theme :host ::ng-deep .p-select-filter {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-theme :host ::ng-deep .custom-dropdown .p-select {
+  background-color: rgba(52, 152, 219, 0.1); /* Darker blue tint for dark mode */
+}
+
+.dark-theme :host ::ng-deep .custom-dropdown .p-select-trigger {
+  background-color: rgba(52, 152, 219, 0.2); /* Slightly darker blue for trigger */
+}
+
+.dark-theme :host ::ng-deep .custom-dropdown .p-select-panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--gradient-start);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5); /* Stronger shadow for dark mode */
+}
+
+.dark-theme :host ::ng-deep .custom-dropdown .p-select-items-wrapper {
+  background-color: var(--bg-card);
+}
+
+.dark-theme :host ::ng-deep .custom-dropdown .p-select-item {
+  color: var(--text-primary);
+}
+
+.dark-theme :host ::ng-deep .custom-dropdown .p-select-item:hover {
+  background-color: rgba(52, 152, 219, 0.2); /* Darker blue for hover in dark mode */
+}
+
+.dark-theme :host ::ng-deep .p-select-filter {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-theme :host ::ng-deep .p-select-header {
+  background: linear-gradient(to right, rgba(52, 152, 219, 0.15), rgba(44, 62, 80, 0.1));
+}
+
+.dark-theme .right-column {
+  background-color: rgba(52, 152, 219, 0.08);
+  border-color: rgba(52, 152, 219, 0.15);
+}
+
+.dark-theme .market-info-placeholder {
+  background-color: rgba(52, 152, 219, 0.05);
+  border-color: rgba(52, 152, 219, 0.1);
+}
+
+/* Additional dark mode styles for select element */
+.dark-theme .custom-select {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a0a0a0' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+}
+
+.dark-theme .custom-select:focus {
+  border-color: var(--gradient-start);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+}
+
+.dark-theme .custom-select option {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :host ::ng-deep .trade-card {
+    max-width: 90%; /* Changed from 100% to maintain some margins */
+  }
+  
+  .card-content {
+    padding: 1.2rem;
+  }
+  
+  /* Stack columns on smaller screens */
+  .column-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .right-column {
+    margin-top: 1rem;
+  }
+  
+  .column-divider {
+    display: none;
+  }
+  
+  /* Adjust button padding for smaller screens */
+  :host ::ng-deep .fetch-button .p-button,
+  :host ::ng-deep .confirm-button .p-button {
+    padding: 0.8rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  :host ::ng-deep .fetch-button .p-button,
+  :host ::ng-deep .confirm-button .p-button {
+    padding: 0.7rem 1rem;
+    border-radius: 20px; /* Slightly smaller radius on small screens */
+  }
+  
+  .form {
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  :host ::ng-deep .trade-card {
+    max-width: 900px; /* Even larger on big screens */
+  }
+}

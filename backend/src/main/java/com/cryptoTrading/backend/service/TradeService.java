@@ -4,17 +4,17 @@ import java.math.BigDecimal;
 
 import com.cryptoTrading.backend.entity.User;
 
+import com.cryptoTrading.backend.exceptions.InsufficientFundsException;
+import com.cryptoTrading.backend.exceptions.InvalidTradeRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.cryptoTrading.backend.dto.TradeRequest;
 import com.cryptoTrading.backend.dto.TransactionDto;
 import com.cryptoTrading.backend.entity.Crypto;
-import com.cryptoTrading.backend.entity.Holding;
 import com.cryptoTrading.backend.entity.Transaction;
 import com.cryptoTrading.backend.enums.TradeType;
 import com.cryptoTrading.backend.mapper.TransactionMapper;
-import com.cryptoTrading.backend.repository.HoldingRepository;
 import com.cryptoTrading.backend.repository.TransactionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -37,15 +37,12 @@ public class TradeService {
     
     public TransactionDto trade(TradeRequest tradeRequest, Long userId) {
         Transaction res = null;
-        if (tradeRequest.getTradeType().equals(TradeType.BUY)) {
-            res = buy(tradeRequest, userId);
-        } else {
-            // Sell logic
-        }
-        
-        if (res == null) {
-            throw new IllegalArgumentException("Invalid trade type");
-        }
+        TradeType tradeType = TradeType.valueOf(tradeRequest.getTradeType());
+        res = switch (tradeType) {
+            case BUY -> buy(tradeRequest, userId);
+            case SELL -> sell(tradeRequest, userId);
+            default -> throw new InvalidTradeRequestException("Invalid trade type");
+        };
 
         return transactionMapper.transactionToDto(res);
     }
@@ -55,9 +52,8 @@ public class TradeService {
 
         BigDecimal balance = user.getBalance();
         BigDecimal total = tradeRequest.getFixedPrice().multiply(tradeRequest.getAmount());
-        if (balance.compareTo(total) < 0) {
-            throw new IllegalArgumentException("Insufficient balance");
-        }
+
+        userService.removeBalance(userId, total);
 
         String code = tradeRequest.getSymbol().replace("/" + currency, "");
         Crypto crypto = cryptoService.getCryptoByCode(code);
@@ -86,7 +82,8 @@ public class TradeService {
         Crypto crypto = cryptoService.getCryptoByCode(code);
 
         holdingService.removeCrypto(user, crypto, amount);
-        user.setBalance(user.getBalance().add(total));
+
+        userService.addBalance(userId, total);
 
         Transaction transaction = Transaction.builder()
             .user(user)

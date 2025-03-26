@@ -43,10 +43,10 @@ public class Transaction {
     @Column(nullable = false)
     private TradeType tradeType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 30, scale = 20)
     private BigDecimal fixedPrice;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 30, scale = 20)
     private BigDecimal amount;
 
     @CreationTimestamp

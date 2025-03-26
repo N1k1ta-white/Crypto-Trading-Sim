@@ -48,7 +48,7 @@ export class NavComponent {
         {
           label: 'Trading',
           icon: 'pi pi-chart-line',
-          routerLink: '/trading'
+          routerLink: '/trade'
         }
       ];
       

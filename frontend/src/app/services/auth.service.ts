@@ -45,7 +45,7 @@ export class AuthService {
           if (response && response.token) {
             const user = {
               username: credentials.username,
-              email: response.email, // The backend might return this
+              email: response.email,
               token: response.token,
               balance: response.balance
             };

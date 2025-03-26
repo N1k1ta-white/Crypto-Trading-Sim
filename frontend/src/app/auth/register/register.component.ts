@@ -75,7 +75,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'success',
           summary: 'Registration Successful',
-          detail: 'Your account has been created!'
+          detail: 'Your account has been created! You will be redirected to login page.',
+          life: 5000
         });
         // Navigate after a delay to show the success message
         setTimeout(() => {
@@ -84,12 +85,25 @@ export class RegisterComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.isLoading = false;
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Registration Failed',
-          detail: error.error?.message || 'Could not create account'
-        });
+        this.showErrorToast(
+          'Registration Failed',
+          error.message || 'Could not create account. Please try again later.',
+          5000
+        );
       }
+    });
+  }
+  
+  /**
+   * Helper method to show error toast with consistent styling
+   */
+  showErrorToast(summary: string, detail: string, duration: number = 4000): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: summary,
+      detail: detail,
+      life: duration,
+      styleClass: 'error-toast'
     });
   }
 }

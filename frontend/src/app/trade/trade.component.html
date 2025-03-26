@@ -1,0 +1,127 @@
+<div class="trade-container" [ngClass]="{'dark-theme': darkMode}">
+  <!-- Enhanced toast position to be more visible -->
+  <p-toast position="top-center" [breakpoints]="{'920px': {width: '100%', right: '0', left: '0'}}"></p-toast>
+  
+  <p-card styleClass="trade-card">
+    <ng-template pTemplate="header">
+      <div class="card-header">
+        <h2>Trade Cryptocurrency</h2>
+      </div>
+    </ng-template>
+    
+    <div class="card-content">
+      <div class="column-layout">
+        <div class="left-column">
+          <form [formGroup]="tradeForm" (ngSubmit)="fetchPrice()" class="form">
+            <div class="form-group">
+              <label for="crypto" class="form-label">Cryptocurrency</label>
+                <select 
+                id="crypto" 
+                formControlName="crypto" 
+                class="w-full custom-select"
+                >
+                <option *ngFor="let option of cryptoOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+              <label for="tradeType" class="form-label">Trade Type</label>
+                <select 
+                id="tradeType" 
+                formControlName="tradeType" 
+                class="w-full custom-select"
+                >
+                <option *ngFor="let option of tradeTypeOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+              <label for="amount" class="form-label">Amount</label>
+              <p-inputNumber 
+                id="amount" 
+                formControlName="amount" 
+                [min]="0.01" 
+                [showButtons]="true"
+                mode="decimal"
+                [minFractionDigits]="2"
+                [maxFractionDigits]="6"
+                [step]="0.01"
+                placeholder="Enter amount"
+                styleClass="custom-input-number"
+              ></p-inputNumber>
+            </div>
+
+            <p-button 
+              type="submit" 
+              [disabled]="tradeForm.invalid" 
+              [label]="tradeForm.get('tradeType')?.value === 'BUY' ? 'Get Buy Price' : 'Get Sell Price'"
+              styleClass="w-full fetch-button"
+            ></p-button>
+          </form>
+        </div>
+        
+        <div class="right-column">
+          <div class="market-info" *ngIf="selectedCryptoData">
+            <h3>{{ selectedCryptoData.symbol }} Information</h3>
+            <div class="market-data-item">
+              <span class="market-data-label">Current Price:</span>
+              <span class="market-data-value">${{ selectedCryptoData.last | number:'1.2-6' }}</span>
+            </div>
+            <div class="market-data-item">
+              <span class="market-data-label">24h Change:</span>
+              <span class="market-data-value" [ngClass]="{'positive': selectedCryptoData.changePct > 0, 'negative': selectedCryptoData.changePct < 0}">
+                {{ selectedCryptoData.changePct > 0 ? '+' : '' }}{{ selectedCryptoData.changePct | number:'1.2-2' }}%
+              </span>
+            </div>
+            <div class="market-data-item">
+              <span class="market-data-label">24h High:</span>
+              <span class="market-data-value">${{ selectedCryptoData.high | number:'1.2-6' }}</span>
+            </div>
+            <div class="market-data-item">
+              <span class="market-data-label">24h Low:</span>
+              <span class="market-data-value">${{ selectedCryptoData.low | number:'1.2-6' }}</span>
+            </div>
+            <div class="market-data-item">
+              <span class="market-data-label">24h Volume:</span>
+              <span class="market-data-value">${{ selectedCryptoData.volume * selectedCryptoData.vwap | number:'1.0-0' }}</span>
+            </div>
+          </div>
+          
+          <div *ngIf="!selectedCryptoData" class="market-info-placeholder">
+            <p class="placeholder-text">Select a cryptocurrency to view market information</p>
+          </div>
+          
+          <div *ngIf="price !== null" class="trade-summary">
+            <div class="price-display">
+              <div class="price-label">Price per unit:</div>
+              <div class="price-value">${{ price | number:'1.2-2' }}</div>
+            </div>
+
+            <div class="price-display">
+              <div class="price-label">Overall Price:</div>
+              <div class="price-value">${{ price * tradeForm.get('amount')?.value | number:'1.2-2' }}</div>
+            </div>
+            
+            <div class="countdown">
+              <div class="countdown-progress">
+                <span class="countdown-bar" [style.width.%]="(countdown/10)*100"></span>
+              </div>
+              <div class="countdown-text">Time left: {{ countdown }} seconds</div>
+            </div>
+            
+            <p-button 
+              (onClick)="confirmPurchase()" 
+              [disabled]="countdown <= 0"
+              label="Confirm Trade"
+              styleClass="w-full confirm-button"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-card>
+</div>

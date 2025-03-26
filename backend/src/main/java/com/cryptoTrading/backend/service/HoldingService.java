@@ -1,6 +1,7 @@
 package com.cryptoTrading.backend.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.springframework.stereotype.Service;
 
@@ -26,18 +27,16 @@ public class HoldingService {
                         holding.getAveragePricing()
                             .multiply(holding.getAmount().subtract(amount))
                             .add(fixedPrice.multiply(amount))
-                            .divide(holding.getAmount())
+                            .divide(holding.getAmount(), 30, RoundingMode.HALF_UP)
                     );
                     holdingRepository.save(holding);
                 },
-                () -> {
-                    holdingRepository.save(Holding.builder()
-                        .user(user)
-                        .crypto(crypto)
-                        .amount(amount)
-                        .averagePricing(fixedPrice)
-                        .build());
-                }
+                () -> holdingRepository.save(Holding.builder()
+                    .user(user)
+                    .crypto(crypto)
+                    .amount(amount)
+                    .averagePricing(fixedPrice)
+                    .build())
             );
     }
 

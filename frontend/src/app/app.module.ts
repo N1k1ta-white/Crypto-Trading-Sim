@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { routes } from './app.routes';
 import { RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { TradeComponent } from './trade/trade.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -10,6 +11,8 @@ import { HttpClient } from '@angular/common/http';
   imports: [
     BrowserModule,
     RouterModule.forRoot(routes),
+    TradeComponent,
+    ReactiveFormsModule
   ],
   providers: [],
 })
