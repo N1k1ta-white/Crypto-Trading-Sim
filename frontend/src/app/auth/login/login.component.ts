@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService } from '../../services/theme.service';
+import { Subscription } from 'rxjs';
 
 // Import PrimeNG components
 import { ButtonModule } from 'primeng/button';
@@ -29,14 +31,18 @@ import { MessageService } from 'primeng/api';
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.css"]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
+  isLoading = false;
+  darkMode = false;
+  private themeSubscription!: Subscription;
   
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private themeService: ThemeService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -44,16 +50,33 @@ export class LoginComponent {
     });
   }
   
+  ngOnInit(): void {
+    // Subscribe to theme changes
+    this.themeSubscription = this.themeService.darkMode$.subscribe(isDark => {
+      this.darkMode = isDark;
+    });
+  }
+  
+  ngOnDestroy(): void {
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
+    }
+  }
+  
   onSubmit(): void {
     if (this.loginForm.invalid) {
       return;
     }
     
+    this.isLoading = true;
+    
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
+        this.isLoading = false;
         this.router.navigate(['/crypto']);
       },
       error: (error) => {
+        this.isLoading = false;
         this.messageService.add({
           severity: 'error',
           summary: 'Login Failed',

@@ -1,29 +1,83 @@
-<div class="flex flex-column align-items-center justify-content-center min-h-screen">
-    <p-card header="Login" styleClass="w-full sm:w-30rem">
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-column gap-3">
-        <div class="field">
-          <label for="username">Username</label>
-          <input id="username" type="text" pInputText formControlName="username" class="w-full" />
-          <small *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="p-error">
-            Username is required
-          </small>
-        </div>
-        
-        <div class="field">
-          <label for="password">Password</label>
-          <p-password id="password" formControlName="password" [toggleMask]="true" [feedback]="false" class="w-full"></p-password>
-          <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="p-error">
-            Password is required
-          </small>
-        </div>
-        
-        <div class="flex flex-column gap-2 mt-4">
-          <p-button type="submit" label="Login" [disabled]="loginForm.invalid"></p-button>
-          <div class="text-center">
-            <span>Don't have an account? </span>
-            <a routerLink="/register">Register</a>
+<div class="dashboard-container" [ngClass]="{'dark-theme': darkMode}">
+  <div class="dashboard-header">
+    <h1>Welcome Back</h1>
+    <p class="subtitle">Log in to your CryptoSim account</p>
+  </div>
+  
+  <div class="card">
+    <div class="card-header">
+      <div class="logo">
+        <i class="pi pi-chart-line"></i>
+      </div>
+      <h2>CryptoSim Login</h2>
+    </div>
+    
+    <div class="card-content">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-grid">
+          <!-- Username field -->
+          <div class="form-field">
+            <label for="username">Username</label>
+            <div class="input-wrapper">
+              <i class="pi pi-user"></i>
+              <input 
+                id="username" 
+                type="text"
+                formControlName="username" 
+                placeholder="Enter your username"
+              />
+            </div>
+            <small *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="error-message">
+              Username is required
+            </small>
+          </div>
+          
+          <!-- Password field -->
+          <div class="form-field">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <i class="pi pi-lock"></i>
+              <input 
+                id="password" 
+                type="password"
+                formControlName="password"
+                placeholder="Enter your password"
+              />
+            </div>
+            <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
+              Password is required
+            </small>
           </div>
         </div>
+        
+        <!-- Action buttons -->
+        <div class="action-buttons">
+          <button 
+            type="submit"
+            class="action-button trade-button"
+            [disabled]="loginForm.invalid || isLoading">
+            <i class="pi pi-sign-in"></i> Login
+          </button>
+          
+          <button 
+            type="button" 
+            class="action-button add-watchlist-button"
+            routerLink="/register">
+            <i class="pi pi-user-plus"></i> Create Account
+          </button>
+        </div>
+        
+        <div class="terms-notice">
+          <a href="#">Forgot Password?</a>
+        </div>
+        
+        <div *ngIf="isLoading" class="loading-indicator">
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>Logging in...</span>
+        </div>
       </form>
-    </p-card>
+    </div>
   </div>
+  
+  <p-toast position="top-right"></p-toast>
+</div>
