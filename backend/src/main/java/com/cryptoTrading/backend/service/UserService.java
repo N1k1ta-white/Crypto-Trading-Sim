@@ -12,6 +12,7 @@ import com.cryptoTrading.backend.config.JwtService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,7 +100,11 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    private User getUserByIdInternal(Long id) {
+    public BigDecimal getUserBalance(Long id) {
+        return getUserByIdInternal(id).getBalance();
+    }
+
+    public User getUserByIdInternal(Long id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
     }

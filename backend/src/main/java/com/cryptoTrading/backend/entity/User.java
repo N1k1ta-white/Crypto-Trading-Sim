@@ -1,11 +1,16 @@
 package com.cryptoTrading.backend.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,6 +45,14 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private BigDecimal balance = BigDecimal.valueOf(10000);
+
+    @OneToMany(mappedBy = "user", targetEntity = Holding.class, orphanRemoval = true, 
+        fetch = FetchType.LAZY)
+    private Set<Holding> holdings;
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

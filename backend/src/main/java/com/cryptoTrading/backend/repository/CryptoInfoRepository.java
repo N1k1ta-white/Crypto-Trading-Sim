@@ -17,6 +17,10 @@ public class CryptoInfoRepository {
                 cryptocurrencyDTOMap.put(cryptocurrencyDto.getSymbol(), cryptocurrencyDto);
         }
 
+        public CryptocurrencyDto getCryptoInfo(String code) {
+                return cryptocurrencyDTOMap.get(code);
+        }
+
         public CryptocurrencyDto updateCryptocurrencyInfo(CryptocurrencyDto newCryptocurrencyDto) {
                 CryptocurrencyDto existingData = cryptocurrencyDTOMap.get(newCryptocurrencyDto.getSymbol());
 

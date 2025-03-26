@@ -2,7 +2,6 @@ package com.cryptoTrading.backend.clients;
 
 import com.cryptoTrading.backend.dto.CryptocurrencyDto;
 import com.cryptoTrading.backend.service.CryptoService;
-import com.cryptoTrading.backend.entity.Crypto;
 import com.cryptoTrading.backend.repository.CryptoInfoRepository;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -20,14 +19,9 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 // TODO: Implement exception throwing for all methods
-// TODO: Refactor to implement repository pattern for cryptocurrency data management
-// - Create a separate CryptocurrencyRepository interface
-// - Implement in-memory and/or persistent storage implementations
-// - Decouple data access from WebSocket client logic
 
 @Component
 public class KrakenWebSocketClient extends WebSocketClient {
@@ -49,7 +43,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
     private final SimpMessagingTemplate messagingTemplate;
 
     private final CryptoService cryptoService;
-    private final CryptoInfoRepository cryptoPricesRepository;
+    private final CryptoInfoRepository cryptoInfoRepository;
 
     private enum MessageType {
         HEARTBEAT("heartbeat"),
@@ -99,18 +93,15 @@ public class KrakenWebSocketClient extends WebSocketClient {
         super(new URI(url));
         this.messagingTemplate = messagingTemplate;
         this.cryptoService = cryptoService;
-        this.cryptoPricesRepository = cryptoPricesRepository;
+        this.cryptoInfoRepository = cryptoPricesRepository;
         this.setConnectionLostTimeout(CONNECTION_LOST_TIMEOUT);
     }
 
     // Main WebSocket lifecycle methods
     @Override
-    public void onOpen(ServerHandshake handshakedata) {
-        logger.info("WebSocket connection opened. Status: " + handshakedata.getHttpStatus());
-        subscribeToTicker(cryptoService.getAllCryptos().stream()
-                                                       .map(Crypto::getCode)
-                                                       .map(code -> code + "/USD")
-                                                       .toArray(String[]::new));
+    public void onOpen(ServerHandshake handshakeData) {
+        logger.info("WebSocket connection opened. Status: " + handshakeData.getHttpStatus());
+        subscribeToTicker(cryptoService.getAllCryptoPairs());
     }
 
     @Override
@@ -125,7 +116,8 @@ public class KrakenWebSocketClient extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        logger.info("WebSocket connection closed. Code: " + code + ", Reason: " + reason + ", Remote: " + remote);
+        logger.info("WebSocket connection closed. Code: " + code + ", Reason: " + reason + 
+            ", Remote: " + remote);
         if (reconnectOnClose) {
             attemptReconnect();
         }
@@ -141,10 +133,6 @@ public class KrakenWebSocketClient extends WebSocketClient {
     public void shutdown() {
         reconnectOnClose = false;
         close();
-    }
-
-    public Collection<CryptocurrencyDto> fetchTradingPairs() {
-        return cryptoPricesRepository.getAllCryptocurrencyInfo();
     }
     
     private void processMessageByType(JsonObject messageData) {
@@ -183,7 +171,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
     private void handleTickerSnapshot(JsonElement obj) {
         try {
             CryptocurrencyDto cryptoDto = gson.fromJson(obj, CryptocurrencyDto[].class)[FIRST_ELEMENT];
-            cryptoPricesRepository.addCryptocurrencyInfo(cryptoDto);
+            cryptoInfoRepository.addCryptocurrencyInfo(cryptoDto);
             // logger.info("Received ticker snapshot");
         } catch (Exception e) {
             logger.warning("Error processing ticker update: " + e.getMessage());
@@ -193,7 +181,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
     private void handleTickerUpdate(JsonElement obj) {
         try {
             CryptocurrencyDto newCryptoDto = gson.fromJson(obj, CryptocurrencyDto[].class)[FIRST_ELEMENT];
-            newCryptoDto = cryptoPricesRepository.updateCryptocurrencyInfo(newCryptoDto);
+            newCryptoDto = cryptoInfoRepository.updateCryptocurrencyInfo(newCryptoDto);
 
             messagingTemplate.convertAndSend("/update/crypto", newCryptoDto);
             // logger.info("Received ticker update");
