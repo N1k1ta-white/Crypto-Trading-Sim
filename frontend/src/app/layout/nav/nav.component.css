@@ -53,6 +53,70 @@
   gap: 1rem;
 }
 
+/* Enhanced menu items styling */
+:host ::ng-deep .custom-menubar .p-menubar-root-list {
+  gap: 12px;
+}
+
+:host ::ng-deep .p-menuitem-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.25rem !important;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+/* Increase space between icon and text */
+:host ::ng-deep .p-menuitem-icon {
+  font-size: 1.1rem;
+  margin-left: 1.25rem !important; /* Increased from 0.75rem */
+  transition: transform 0.2s ease;
+}
+
+:host ::ng-deep .p-menuitem:hover .p-menuitem-icon {
+  transform: scale(1.15);
+}
+
+:host ::ng-deep .p-menuitem-text {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Hover effect with subtle background */
+:host ::ng-deep .p-menuitem:hover .p-menuitem-link {
+  background-color: var(--bg-secondary) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Active menu item with enhanced styling */
+:host ::ng-deep .p-menuitem-active > .p-menuitem-link {
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+}
+
+:host ::ng-deep .p-menuitem-active > .p-menuitem-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  background-color: white;
+  border-radius: 3px 3px 0 0;
+}
+
+:host ::ng-deep .p-menuitem-active > .p-menuitem-link .p-menuitem-text {
+  font-weight: 600;
+}
+
+:host ::ng-deep .p-menuitem-active > .p-menuitem-link .p-menuitem-icon {
+  transform: scale(1.15);
+}
+
 :host ::ng-deep .p-menuitem-link {
   display: flex;
   align-items: center;
@@ -68,10 +132,6 @@
 
 :host ::ng-deep .p-menuitem:hover .p-menuitem-link {
   background-color: var(--bg-secondary) !important;
-}
-
-:host ::ng-deep .p-menuitem-link .p-menuitem-icon {
-  margin-right: 0.5rem;
 }
 
 /* Active route styling */
@@ -216,4 +276,107 @@
 
 .theme-toggle-button i {
   animation: spin 0.5s ease;
+}
+
+/* Status badges for menu items */
+:host ::ng-deep .status-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 10px;
+  margin-left: 8px;
+  color: white;
+  font-weight: bold;
+}
+
+:host ::ng-deep .status-badge.success {
+  background-color: #22c55e;
+}
+
+:host ::ng-deep .status-badge.warning {
+  background-color: #f59e0b;
+}
+
+:host ::ng-deep .status-badge.info {
+  background-color: #3b82f6;
+}
+
+/* User menu styling */
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  background-color: var(--bg-secondary);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.user-menu:hover {
+  background-color: var(--border-color);
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.balance {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Custom menu item badges */
+:host ::ng-deep .p-menuitem-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+  margin-left: 0.5rem;
+  background-color: var(--gradient-start);
+  color: white;
+}
+
+/* Fix spacing with the logout button */
+.logout-button {
+  margin-left: 0.5rem;
+}
+
+/* Responsive adjustments for user menu */
+@media (max-width: 768px) {
+  .user-menu {
+    padding: 0.25rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .user-info {
+    display: none;
+  }
+  
+  .logout-button {
+    margin-left: 0;
+    padding: 0.5rem;
+  }
+  
+  .logout-button span {
+    display: none;
+  }
 }

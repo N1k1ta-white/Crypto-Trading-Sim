@@ -8,6 +8,7 @@ export interface User {
   username: string;
   email: string;
   token?: string;
+  balance?: number;
 }
 
 export interface AuthCredentials {
@@ -44,8 +45,9 @@ export class AuthService {
           if (response && response.token) {
             const user = {
               username: credentials.username,
-              email: '', // The backend might return this
-              token: response.token
+              email: response.email, // The backend might return this
+              token: response.token,
+              balance: response.balance
             };
             localStorage.setItem('currentUser', JSON.stringify(user));
             this.currentUserSubject.next(user);

@@ -1,5 +1,5 @@
 <div class="nav-container" [ngClass]="{'dark-theme': darkMode}">
-  <p-menubar [model]="menuItems">
+  <p-menubar [model]="menuItems" styleClass="custom-menubar">
     <ng-template pTemplate="start">
       <div class="app-logo">
         CryptoSim
@@ -17,9 +17,18 @@
         </ng-container>
         
         <ng-template #loggedIn>
-          <button class="auth-button logout-button" (click)="logout()">
-            <i class="pi pi-sign-out"></i> Logout
-          </button>
+          <div class="user-menu">
+            <div class="user-avatar">
+              <span>{{ getUserInitials() }}</span>
+            </div>
+            <div class="user-info">
+              <span class="username">{{ getUsername() }}</span>
+              <span class="balance">${{ getUserBalance() | number:'1.2-2' }}</span>
+            </div>
+            <button class="auth-button logout-button" (click)="logout()">
+              <i class="pi pi-sign-out"></i> Logout
+            </button>
+          </div>
         </ng-template>
       </div>
     </ng-template>

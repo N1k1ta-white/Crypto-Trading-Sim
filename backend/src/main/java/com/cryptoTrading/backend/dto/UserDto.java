@@ -1,5 +1,7 @@
 package com.cryptoTrading.backend.dto;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
@@ -28,4 +30,6 @@ public class UserDto {
     private String email;
 
     private String token;
+
+    private BigDecimal balance;
 }
