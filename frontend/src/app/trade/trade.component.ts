@@ -200,9 +200,9 @@ export class TradeComponent implements OnInit, OnDestroy {
       this.countdown = 10 - seconds;
       if (this.countdown <= 0) {
         this.countdownSubscription.unsubscribe();
-        // Reset price when the timer reaches zero
+
         this.price = null;
-        // Show a toast notification to inform the user
+
         this.messageService.add({
           severity: 'info',
           summary: 'Price Expired',
@@ -267,8 +267,6 @@ export class TradeComponent implements OnInit, OnDestroy {
   fetchUserHoldings() {
     this.http.get<Holding[]>(`${env.apiUrl}/holding`).subscribe({
       next: (holdings) => {
-        // Create a map of crypto code to amount
-        console.log('holdings', holdings);
         this.userHoldings = {};
         holdings.forEach((holding: Holding) => {
           this.userHoldings[holding.cryptoCode] = holding.amount;

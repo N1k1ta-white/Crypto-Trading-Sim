@@ -1,7 +1,6 @@
 package com.cryptoTrading.backend.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

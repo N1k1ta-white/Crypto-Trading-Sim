@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-// TODO: Implement exception throwing for all methods
-
 @Component
 public class KrakenWebSocketClient extends WebSocketClient {
     private static final Logger logger = Logger.getLogger(KrakenWebSocketClient.class.getName());

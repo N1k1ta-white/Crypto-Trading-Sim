@@ -38,13 +38,10 @@ public class UserService {
     public UserDto resetUser(Long userId) {
         User user = getUserByIdInternal(userId);
         
-        // First delete transactions (no foreign key dependencies)
         tradeService.removeTransactions(userId);
         
-        // Then delete holdings (before cryptos)
         holdingService.removeHolding(userId);
         
-        // Reset user balance
         user.setBalance(resetBalance);
         userRepository.save(user);
         
