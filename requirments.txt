@@ -1,0 +1,108 @@
+# Backend Dependencies (Java/Spring)
+spring-boot-starter-web:3.2.2
+spring-boot-starter-websocket:3.2.2
+Java-WebSocket:1.5.3
+gson:2.10.1
+spring-boot-devtools:3.2.2
+lombok:latest
+spring-boot-starter-data-jpa:3.2.2
+spring-boot-starter-test:3.2.2
+mysql-connector-java:8.0.33
+jakarta.persistence-api:3.1.0
+jakarta.validation-api:3.0.2
+spring-security-crypto:5.8.0
+jjwt-api:0.12.5
+jjwt-impl:0.12.5
+jjwt-jackson:0.12.5
+spring-boot-starter-security:3.2.2
+mapstruct:1.5.5.Final
+mapstruct-processor:1.5.5.Final
+
+# Frontend Dependencies (Angular)
+@angular/animations:^19.2.0
+@angular/common:^19.2.0
+@angular/compiler:^19.2.0
+@angular/core:^19.2.0
+@angular/forms:^19.2.0
+@angular/platform-browser:^19.2.0
+@angular/platform-browser-dynamic:^19.2.0
+@angular/router:^19.2.0
+chart.js:^4.4.1
+primeflex:^3.3.1
+primeicons:^7.0.0
+primeng:^19.7.0
+rxjs:~7.8.0
+tslib:^2.3.0
+zone.js:~0.15.0
+
+# Frontend Dev Dependencies
+@angular-devkit/build-angular:^19.2.4
+@angular/cli:^19.2.4
+@angular/compiler-cli:^19.2.0
+@ngx-env/builder:^19.0.4
+@types/jasmine:~5.1.0
+@types/node:^22.13.11
+@types/sockjs-client:^1.5.4
+jasmine-core:~5.6.0
+karma:~6.4.0
+karma-chrome-launcher:~3.2.0
+karma-coverage:~2.2.0
+karma-jasmine:~5.1.0
+karma-jasmine-html-reporter:~2.1.0
+typescript:~5.7.2
+
+# MySQL Database
+mysql-server:8.0+
+user:admin
+password:123pass
+database:CryptoTradingSimulator
+
+# System Requirements
+Java:21+
+Node.js:16+
+npm:8+
+Maven:3.8+
+
+# Backend Environment Variables
+spring.application.name=crypto-trading-backend
+server.port=5000
+spring.datasource.url=jdbc:mysql://localhost:3306/CryptoTradingSimulator
+spring.datasource.username=admin
+spring.datasource.password=123pass
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+kraken.websocket.url=wss://ws.kraken.com/v2
+allowed.origins.http=http://localhost:4200
+jwt.term=7200000
+jwt.secretKey=67e108f928f69b2f3e3ee8ca366e3feaf98da785d69564af32a4b753992592bcb85afce98f3479015286a46042610868d67daf13bd275ee6ec24dbd91f13ca734fd9fc58c173b6444c3ec9ff90a5ab412d53e332d89d5ef12ef89531f992a01ecba76fcd8c00aa53ffa7f30d04857f7f2484647c4788aaa7b1c582df7db14894e0ccb400df74c449568ef342a63bc301682dbeead84d4496c89e4d6ed36b0e24148f5e16179f0541f2986d48b80cc0646d611d56712beb4e7f4a73386f4461149fb1cd7e96e2c73519a442dccab88deb84cb44170d0770b02fba08009cef8a8b62294a3f393371b3a7112fb0b13891bfda419db03998fb974bb59507e7e1a11b
+spring.jackson.default-property-inclusion=non_null
+crypto.pair.currency=USD
+reset.balance=10000
+
+# Frontend Environment Variables
+export const env = {
+    production: false,
+    apiUrl: "http://localhost:5000/api"
+}
+
+# CryptoCodes
+ADA
+AVAX
+BCH
+BTC
+DOGE
+DOT
+ETH
+LINK
+LTC
+OM
+PEPE
+SOL
+SUI
+TON
+TRX
+UNI
+USDC
+USDT
+XLM
+XRP
