@@ -826,3 +826,18 @@
 .dark-theme .max-hint {
   color: #aaa;
 }
+
+.gradient-title {
+  /* Add a fallback color first */
+  color: #3498db; /* Fallback to a solid blue color */
+  /* Then apply the gradient with more vibrant blue colors */
+  background: linear-gradient(90deg, #3498db, #2980b9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  /* Adding slight text shadow to enhance visibility */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}

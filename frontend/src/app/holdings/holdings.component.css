@@ -624,3 +624,51 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* Add these styles at the end of your CSS file */
+
+.reset-section {
+  margin-top: 2rem;
+  text-align: center;
+  padding: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+  border: 1px dashed var(--border-color);
+}
+
+.reset-info {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.reset-button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reset-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+.reset-button:active {
+  transform: translateY(0);
+}
+
+.reset-button .pi {
+  font-size: 1rem;
+}
+
+.dark-theme .reset-section {
+  background-color: rgba(255, 255, 255, 0.03);
+}

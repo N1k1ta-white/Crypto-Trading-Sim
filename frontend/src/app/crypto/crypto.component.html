@@ -1,4 +1,3 @@
-<!-- Add the darkMode binding to your container div -->
 <div class="dashboard-container" [ngClass]="{'dark-theme': darkMode, 'light-theme': !darkMode}">
   
   <div class="dashboard-header">
@@ -73,12 +72,12 @@
         <div class="detail-grid">
           <div class="detail-item">
             <span class="detail-label">Current Price</span>
-            <span class="detail-value">${{ selectedCrypto.last | number:'1.2-6' }}</span>
+            <span class="detail-value">${{ selectedCrypto.last | number:'1.2-8' }}</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">24h Change</span>
             <span class="detail-value" [ngClass]="{'positive': selectedCrypto.change > 0, 'negative': selectedCrypto.change < 0}">
-              {{ selectedCrypto.change | number:'1.2-2' }}$ ({{ selectedCrypto.changePct | number:'1.2-2' }}%)
+              {{ selectedCrypto.change | number:'1.2-8' }}$ ({{ selectedCrypto.changePct | number:'1.2-8' }}%)
             </span>
           </div>
           <div class="detail-item">
@@ -119,7 +118,7 @@
       </div>
       
       <div class="detail-action-buttons">
-        <button class="action-button trade-button">Trade Now</button>
+        <button class="action-button trade-button" routerLink="/trade">Trade Now</button>
         <button class="action-button add-watchlist-button">Add to Watchlist</button>
       </div>
     </div>

@@ -212,4 +212,14 @@
       </div>
     </div>
   </p-dialog>
+
+  <!-- Add this at the end of your component, after the transaction dialog -->
+
+  <div class="reset-section">
+    <p class="reset-info">Want to start over? Reset your account to the default balance and clear all holdings.</p>
+    <button class="reset-button" (click)="resetAccount()">
+      <i class="pi pi-refresh"></i>
+      Reset Account
+    </button>
+  </div>
 </div>

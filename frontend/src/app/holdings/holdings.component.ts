@@ -12,6 +12,7 @@ import { Holding } from '../models/holding.interface';
 import { CryptoService } from '../services/crypto.service';
 import { Transaction } from '../models/transactions.interface';
 import { BalanceService } from '../services/balance.service';
+import { AuthService } from '../services/auth.service';
 
 
 @Component({
@@ -40,7 +41,8 @@ export class HoldingsComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private themeService: ThemeService,
     private cryptoService: CryptoService,
-    private balanceService: BalanceService
+    private balanceService: BalanceService,
+    private authService: AuthService,
   ) {}
   
   ngOnInit(): void {
@@ -144,5 +146,23 @@ export class HoldingsComponent implements OnInit, OnDestroy {
   refreshData(): void {
     this.fetchHoldings();
     this.fetchTransactions();
+  }
+
+  resetAccount(): void {
+    if (confirm('Are you sure you want to reset your account? This will remove all holdings and set your balance to the default amount.')) {
+      this.http.post<any>(`${env.apiUrl}/user/reset`, {}).subscribe({
+        next: (response) => {
+          this.userBalance = response.balance;
+          this.refreshData();
+          this.authService.refreshUser();
+          
+          this.portfolioValue = 0;
+          this.totalProfitLoss = 0;
+        },
+        error: (error) => {
+          console.error('Error resetting account:', error);
+        }
+      });
+    }
   }
 }
