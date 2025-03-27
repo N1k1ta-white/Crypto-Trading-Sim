@@ -1,6 +1,5 @@
 package com.cryptoTrading.backend.exceptions;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,7 +16,6 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     
-    // Handle specific custom exceptions
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
             ResourceNotFoundException ex, WebRequest request) {
@@ -33,7 +31,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-    // Handle entity not found exception
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleEntityNotFoundException(
             EntityNotFoundException ex, WebRequest request) {
@@ -49,7 +46,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
     
-    // Handle validation exceptions
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, WebRequest request) {
@@ -71,7 +67,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
     
-    // Handle authentication exception
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationException(
             AuthenticationException ex, WebRequest request) {
@@ -87,7 +82,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
     
-    // Handle insufficient funds exception
     @ExceptionHandler(InsufficientFundsException.class)
     public ResponseEntity<ErrorResponse> handleInsufficientFundsException(
             InsufficientFundsException ex, WebRequest request) {
@@ -103,7 +97,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
     
-    // Handle insufficient crypto holdings exception
     @ExceptionHandler(InsufficientHoldingsException.class)
     public ResponseEntity<ErrorResponse> handleInsufficientHoldingsException(
             InsufficientHoldingsException ex, WebRequest request) {
@@ -119,7 +112,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
     
-    // Handle expired price exception
     @ExceptionHandler(PriceExpiredException.class)
     public ResponseEntity<ErrorResponse> handlePriceExpiredException(
             PriceExpiredException ex, WebRequest request) {
@@ -135,7 +127,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
     
-    // Handle market closed exception
     @ExceptionHandler(MarketClosedException.class)
     public ResponseEntity<ErrorResponse> handleMarketClosedException(
             MarketClosedException ex, WebRequest request) {
@@ -151,7 +142,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.SERVICE_UNAVAILABLE);
     }
     
-    // Handle duplicate resource exception
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateResourceException(
             DuplicateResourceException ex, WebRequest request) {
@@ -167,7 +157,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
     
-    // Handle unauthorized operation exception
     @ExceptionHandler(UnauthorizedOperationException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedOperationException(
             UnauthorizedOperationException ex, WebRequest request) {
@@ -183,11 +172,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
     
-    // Handle invalid trade request exception
     @ExceptionHandler(InvalidTradeRequestException.class)
     public ResponseEntity<ErrorResponse> handleInvalidTradeRequestException(
-            InvalidTradeRequestException ex, WebRequest request) {
-        
+        InvalidTradeRequestException ex, WebRequest request) {
+
         ErrorResponse errorResponse = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
@@ -195,13 +183,27 @@ public class GlobalExceptionHandler {
                 ex.getMessage(),
                 request.getDescription(false)
         );
-        
+
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
+        IllegalArgumentException ex, WebRequest request) {
+        
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Illegal Argument",
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+     }
     
-    // Handle all other exceptions
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGlobalException(
+     @ExceptionHandler(Exception.class)
+     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, WebRequest request) {
         
         ErrorResponse errorResponse = new ErrorResponse(
@@ -213,5 +215,5 @@ public class GlobalExceptionHandler {
         );
         
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+     }
 }

@@ -41,18 +41,36 @@
 
             <div class="form-group">
               <label for="amount" class="form-label">Amount</label>
-              <p-inputNumber 
-                id="amount" 
-                formControlName="amount" 
-                [min]="0.01" 
-                [showButtons]="true"
-                mode="decimal"
-                [minFractionDigits]="2"
-                [maxFractionDigits]="6"
-                [step]="0.01"
-                placeholder="Enter amount"
-                styleClass="custom-input-number"
-              ></p-inputNumber>
+              <div class="amount-input-container">
+                <p-inputNumber 
+                  id="amount" 
+                  formControlName="amount" 
+                  [min]="0.01" 
+                  [showButtons]="true"
+                  mode="decimal"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="6"
+                  [step]="0.01"
+                  placeholder="Enter amount"
+                  styleClass="custom-input-number"
+                ></p-inputNumber>
+                
+                <button 
+                  type="button" 
+                  class="max-button" 
+                  (click)="setMaxAmount()" 
+                  [disabled]="!maxAmount || maxAmount <= 0">
+                  Max: {{ maxAmount | number:'1.0-6' }}
+                </button>
+              </div>
+              <div class="max-info" *ngIf="tradeForm.get('crypto')?.value">
+                <ng-container *ngIf="tradeForm.get('tradeType')?.value === 'BUY'">
+                  <small class="max-hint">Maximum you can buy with your balance</small>
+                </ng-container>
+                <ng-container *ngIf="tradeForm.get('tradeType')?.value === 'SELL'">
+                  <small class="max-hint">Available in your portfolio</small>
+                </ng-container>
+              </div>
             </div>
 
             <p-button 

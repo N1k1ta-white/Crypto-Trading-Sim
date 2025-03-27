@@ -1,33 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
 import { env } from '../env';
-
-export interface User {
-  id?: number;
-  username: string;
-  email: string;
-  token?: string;
-  balance?: number;
-}
-
-export interface AuthCredentials {
-  username: string;
-  password: string;
-  email?: string;
-}
+import { User } from '../models/user.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
   
-  private apiUrl = 'http://localhost:5000/api/user';
-  
-  constructor(private http: HttpClient) {
-    // Check if there's a stored token on initialization
+  private apiUrl = env.apiUrl + '/user';
+
+  constructor(private http: HttpClient, private router: Router) {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       this.currentUserSubject.next(JSON.parse(storedUser));
@@ -49,24 +35,45 @@ export class AuthService {
               token: response.token,
               balance: response.balance
             };
+
             localStorage.setItem('currentUser', JSON.stringify(user));
             this.currentUserSubject.next(user);
           }
         })
       );
   }
+
+  refreshUser(): void {
+    this.http.get<User>(`${this.apiUrl}/me`).subscribe({
+      next: (user) => {
+        user.token = this.currentUserValue?.token;
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+      },
+      error: (error) => {
+        console.error('Error refreshing user:', error);
+        if (error.status === 401) {
+          this.logout();
+          this.router.navigate(['/login']);
+        }
+      }
+    });
+  }
   
-  register(userData: { username: string; password: string; email: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/register`, userData);
+  register(userData: { username: string; password: string; email: string }): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/register`, userData);
   }
   
   logout(): void {
-    // Remove user from local storage and reset current user
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
   }
   
   isLoggedIn(): boolean {
     return !!this.currentUserValue?.token;
+  }
+
+  get currentUser$(): Observable<User | null> {
+    return this.currentUserSubject.asObservable();
   }
 }

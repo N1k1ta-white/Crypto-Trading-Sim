@@ -776,3 +776,53 @@
     max-width: 900px; /* Even larger on big screens */
   }
 }
+
+.amount-input-container {
+  display: flex;
+  align-items: center;
+}
+
+.amount-input-container .p-inputnumber {
+  flex: 1;
+}
+
+.max-button {
+  margin-left: 8px;
+  padding: 6px 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.max-button:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.max-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.max-hint {
+  color: #666;
+  font-style: italic;
+  margin-top: 4px;
+  display: block;
+}
+
+.dark-theme .max-button {
+  background-color: #444;
+  border-color: #555;
+  color: #fff;
+}
+
+.dark-theme .max-button:hover:not(:disabled) {
+  background-color: #555;
+}
+
+.dark-theme .max-hint {
+  color: #aaa;
+}

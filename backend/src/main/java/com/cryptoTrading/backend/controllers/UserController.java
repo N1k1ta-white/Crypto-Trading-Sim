@@ -37,6 +37,11 @@ public class UserController {
     public ResponseEntity<UserDto> login(@RequestBody UserDto userDto) {
         return ResponseEntity.ok(userService.authenticateUser(userDto));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> getCurrentUser(@CurrentUserId Long currentUserId) {
+        return ResponseEntity.ok(userService.fetchUserById(currentUserId));
+    }
     
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(

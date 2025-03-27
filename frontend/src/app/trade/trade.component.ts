@@ -13,6 +13,8 @@ import { MessageService } from 'primeng/api';
 import { env } from '../env';
 import { Crypto } from '../entity/crypto.entity';
 import { TradeRequest } from '../models/trade-request.interface';
+import { AuthService } from '../services/auth.service';
+import { CryptoService } from '../services/crypto.service';
 
 @Component({
   selector: 'app-trade',
@@ -35,6 +37,7 @@ export class TradeComponent implements OnInit, OnDestroy {
   countdown: number = 10;
   successMessageVisible = false;
   darkMode = false;
+  approxPrice: number | null = null;
   
   cryptoOptions: { label: string, value: string }[] = [];
   
@@ -45,27 +48,37 @@ export class TradeComponent implements OnInit, OnDestroy {
   
   private countdownSubscription!: Subscription;
   private themeSubscription!: Subscription;
+  private cryptoSubscription!: Subscription;
   selectedCryptoData: Crypto | null = null;
+
+  maxAmount: number | null = null;
+  userBalance: number = 0;
+  userHoldings: {[key: string]: number} = {};
 
   constructor(
     private fb: FormBuilder, 
     private http: HttpClient,
     private themeService: ThemeService,
-    private messageService: MessageService
-  ) {
+    private messageService: MessageService,
+    private authService: AuthService,
+    private cryptoService: CryptoService
+    ) {
     this.tradeForm = this.fb.group({
       crypto: ['', Validators.required],
       tradeType: ['BUY', Validators.required],
       amount: [0, [Validators.required, Validators.min(0.01)]] // Changed min value to 0.01
     });
 
-    // Subscribe to crypto selection changes
     this.tradeForm.get('crypto')?.valueChanges.subscribe(crypto => {
       if (crypto) {
         this.fetchCryptoData(crypto);
       } else {
         this.selectedCryptoData = null;
       }
+    });
+
+    this.cryptoSubscription = this.cryptoService.getCryptoUpdates().subscribe(() => {
+      this.approxPrice = this.selectedCryptoData?.last ?? null;
     });
   }
 
@@ -77,20 +90,38 @@ export class TradeComponent implements OnInit, OnDestroy {
     
     // Fetch available cryptocurrencies from the backend
     this.fetchCryptocurrencies();
+
+    // Get user balance
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.userBalance = user.balance ?? 0;
+      }
+    });
+    
+    // Fetch user's holdings
+    this.fetchUserHoldings();
+    
+    // Subscribe to form value changes to update max amounts
+    this.tradeForm.get('crypto')?.valueChanges.subscribe(crypto => {
+      this.updateMaxAmount();
+    });
+    
+    this.tradeForm.get('tradeType')?.valueChanges.subscribe(tradeType => {
+      this.updateMaxAmount();
+    });
   }
   
   fetchCryptocurrencies(): void {
     this.http.get<Crypto[]>(`${env.apiUrl}/crypto`).subscribe({
       next: (cryptos) => {
-        this.cryptoOptions = cryptos.map(crypto => {
-          // Remove "/USD" from symbol if present
+          this.cryptoOptions = cryptos.map(crypto => {
+
           const cleanSymbol = crypto.symbol.replace('/USD', '');
           return {
             label: cleanSymbol,
             value: cleanSymbol
           };
         });
-        console.log('Fetched crypto options:', this.cryptoOptions);
       },
       error: (error) => {
         console.error('Error fetching cryptocurrencies:', error);
@@ -112,14 +143,14 @@ export class TradeComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Fetch data for the selected cryptocurrency
-   */
   fetchCryptoData(symbol: string): void {
     this.http.get<Crypto>(`${env.apiUrl}/crypto/${symbol}`).subscribe({
       next: (data) => {
         this.selectedCryptoData = data;
-        console.log('Fetched crypto data:', data);
+
+        this.approxPrice = data.last;
+
+        this.updateMaxAmount();
       },
       error: (error) => {
         console.error(`Error fetching data for ${symbol}:`, error);
@@ -149,13 +180,15 @@ export class TradeComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.price = data.last;
         this.selectedCryptoData = data; // Update the selected crypto data
+        this.updateMaxAmount(); // Update max amount when price is fetched
         this.startCountdown();
       },
       error: (error) => {
         this.price = null;
         this.showErrorToast(
           'Price Fetch Failed',
-          `We couldn't retrieve the current market price for ${crypto}. Please try again in a moment.`,
+          `We couldn't retrieve the current market price for ${crypto}. Please try again in a moment.
+          + Error: ${error.message}`,
           4000
         );
       }
@@ -165,7 +198,6 @@ export class TradeComponent implements OnInit, OnDestroy {
   startCountdown(): void {
     this.countdown = 10;
     
-    // Clear any existing subscription to avoid multiple timers
     if (this.countdownSubscription) {
       this.countdownSubscription.unsubscribe();
     }
@@ -195,17 +227,20 @@ export class TradeComponent implements OnInit, OnDestroy {
     const cryptoSymbol = tradeData.crypto;
     const amount = tradeData.amount;
     
-    // Create proper trade request object using the interface
     const tradeRequest: TradeRequest = {
       symbol: cryptoSymbol,
       tradeType: tradeData.tradeType,
       fixedPrice: this.price,
       amount: amount
     };
+
+    this.countdownSubscription.unsubscribe();
     
-    // The auth interceptor will automatically add the token
     this.http.post(`${env.apiUrl}/trade`, tradeRequest).subscribe({
       next: () => {
+        this.authService.refreshUser();
+        this.fetchUserHoldings();
+        
         this.messageService.add({
           severity: 'success',
           summary: `${tradeAction} Successful!`,
@@ -217,7 +252,6 @@ export class TradeComponent implements OnInit, OnDestroy {
         this.tradeForm.get('amount')?.setValue(0);
       },
       error: (error) => {
-        console.error('Trade error:', error);
         let errorMsg = `Your ${tradeAction.toLowerCase()} of ${amount} ${cryptoSymbol} could not be processed.`;
         
         this.showErrorToast(`${tradeAction} Failed`, errorMsg + error.message, 5000);
@@ -225,9 +259,6 @@ export class TradeComponent implements OnInit, OnDestroy {
     });
   }
   
-  /**
-   * Helper method to show error toast with consistent styling
-   */
   showErrorToast(summary: string, detail: string, duration: number = 4000): void {
     this.messageService.add({
       severity: 'error',
@@ -236,5 +267,51 @@ export class TradeComponent implements OnInit, OnDestroy {
       life: duration,
       styleClass: 'error-toast'
     });
+  }
+
+  fetchUserHoldings() {
+    this.http.get<any>(`${env.apiUrl}/holdings`).subscribe({
+      next: (holdings) => {
+        // Create a map of crypto code to amount
+        this.userHoldings = {};
+        holdings.forEach((holding: any) => {
+          this.userHoldings[holding.crypto] = +holding.amount;
+        });
+        this.updateMaxAmount();
+      },
+      error: (error) => {
+        console.error('Error fetching holdings', error);
+      }
+    });
+  }
+  
+  updateMaxAmount() {
+    const crypto = this.tradeForm.get('crypto')?.value;
+    const tradeType = this.tradeForm.get('tradeType')?.value;
+    
+    if (!crypto) {
+      this.maxAmount = null;
+      return;
+    }
+    
+    if (tradeType === 'BUY') {
+      if (this.approxPrice && this.approxPrice > 0 && this.userBalance > 0) {
+        // Calculate max amount user can buy with their balance
+        // Reduce slightly to account for price fluctuations
+        this.maxAmount = this.userBalance / this.approxPrice * 0.99;
+      } else {
+        this.maxAmount = null;
+      }
+    } else if (tradeType === 'SELL') {
+      // Get the amount of this crypto that the user owns
+      const cryptoCode = crypto.replace(/\/.*$/, ''); // Remove the trading pair suffix if any
+      this.maxAmount = this.userHoldings[cryptoCode] || 0;
+    }
+  }
+  
+  setMaxAmount() {
+    if (this.maxAmount && this.maxAmount > 0) {
+      this.tradeForm.get('amount')?.setValue(this.maxAmount);
+    }
   }
 }

@@ -9,13 +9,13 @@
   --text-primary: #2c3e50;
   --text-secondary: #7f8c8d;
   --text-subtitle: #7f8c8d;
-  --price-up: #00a152;    /* Darker green for light mode */
-  --price-down: #d32f2f;  /* Darker red for light mode */
+  --price-up: #00a152; /* Darker green for light mode */
+  --price-down: #d32f2f; /* Darker red for light mode */
   --shadow-color: rgba(0, 0, 0, 0.08);
   --gradient-start: #3498db;
   --gradient-end: #2c3e50;
   --positive-bg: rgba(46, 204, 113, 0.35); /* Increased opacity for light mode */
-  --negative-bg: rgba(231, 76, 60, 0.35);  /* Increased opacity for light mode */
+  --negative-bg: rgba(231, 76, 60, 0.35); /* Increased opacity for light mode */
   --neutral-bg: rgba(149, 165, 166, 0.25);
 }
 
@@ -30,13 +30,13 @@
   --text-primary: #e5e5e5;
   --text-secondary: #a0a0a0;
   --text-subtitle: #a0a0a0;
-  --price-up: #4cd987;    /* Brighter green for dark mode */
-  --price-down: #ff6b6b;  /* Brighter red for dark mode */
+  --price-up: #4cd987; /* Brighter green for dark mode */
+  --price-down: #ff6b6b; /* Brighter red for dark mode */
   --shadow-color: rgba(0, 0, 0, 0.2);
   --gradient-start: #4fa3e3;
   --gradient-end: #78a2c5;
-  --positive-bg: rgba(46, 204, 113, 0.4);  /* Increased opacity for dark mode */
-  --negative-bg: rgba(231, 76, 60, 0.4);   /* Increased opacity for dark mode */
+  --positive-bg: rgba(46, 204, 113, 0.4); /* Increased opacity for dark mode */
+  --negative-bg: rgba(231, 76, 60, 0.4); /* Increased opacity for dark mode */
   --neutral-bg: rgba(149, 165, 166, 0.3);
 }
 
@@ -52,7 +52,8 @@
 }
 
 /* Adjust gradient colors for dark mode if needed */
-:host-context(.dark-theme), .dark-theme {
+:host-context(.dark-theme),
+.dark-theme {
   --gradient-start: #4fa3e3; /* Light blue for dark mode */
   --gradient-end: #78a2c5; /* Lighter blue for dark mode */
 }
@@ -89,7 +90,7 @@
   width: calc(100% - 4rem);
   max-width: 1200px;
   margin: 0 auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -294,7 +295,8 @@
 }
 
 /* Remove the dots */
-.price-up::after, .price-down::after {
+.price-up::after,
+.price-down::after {
   display: none;
 }
 
@@ -303,26 +305,26 @@
   .dashboard-container {
     padding: 1rem;
   }
-  
+
   .dashboard-header h1 {
     font-size: 1.8rem;
   }
-  
+
   .card-header {
     padding: 1rem;
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .refresh-indicator {
     margin-top: 0.5rem;
   }
-  
+
   :host ::ng-deep .crypto-table th,
   :host ::ng-deep .crypto-table td {
     padding: 0.8rem 1rem;
   }
-  
+
   .theme-toggle-label {
     top: 0.5rem;
     right: 0.5rem;
@@ -393,8 +395,8 @@ body {
 
 /* Fix dialog backdrop for better visibility */
 :host ::ng-deep .p-dialog-mask {
-  background-color: rgba(0, 0, 0, 0.5) ;
-  backdrop-filter: blur(2px) ;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
 }
 
 /* Ensure dialog content has good contrast in light mode */
@@ -607,7 +609,7 @@ body {
   .detail-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .detail-action-buttons {
     flex-direction: column;
   }
@@ -636,4 +638,81 @@ body {
 .refresh-indicator {
   display: flex;
   align-items: center;
+}
+
+/* Light Theme Styling */
+.light-theme.dashboard-container {
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+.light-theme .card {
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e6e9f0;
+}
+
+.light-theme .card-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e6e9f0;
+}
+
+.light-theme .crypto-table {
+  background-color: #ffffff;
+}
+
+.light-theme p-table ::ng-deep .p-datatable-tbody > tr {
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.light-theme p-table ::ng-deep .p-datatable-thead > tr > th {
+  background-color: #f9fafb;
+  color: #333;
+  border-bottom: 1px solid #e6e9f0;
+}
+
+.light-theme .crypto-row:hover {
+  background-color: #f0f5ff !important;
+}
+
+/* Fix dialog for light theme */
+.light-theme p-dialog ::ng-deep .p-dialog-content,
+.light-theme p-dialog ::ng-deep .p-dialog-header {
+  background-color: #ffffff;
+  color: #333;
+}
+
+.light-theme .crypto-detail-content {
+  background-color: #ffffff;
+}
+
+.light-theme .detail-section {
+  background-color: #f9fafb;
+  border: 1px solid #e6e9f0;
+}
+
+/* Action buttons in light theme */
+.light-theme .action-button {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #e0e0e0;
+}
+
+.light-theme .action-button:hover {
+  background-color: #e5e5e5;
+}
+
+.light-theme .trade-button {
+  background-color: #1976d2;
+  color: white;
+}
+
+.light-theme .trade-button:hover {
+  background-color: #1565c0;
+}
+
+/* Ensure dialog has proper styling regardless of theme */
+:host ::ng-deep .p-dialog {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }

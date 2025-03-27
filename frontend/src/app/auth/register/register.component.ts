@@ -29,11 +29,9 @@ import { Subscription } from 'rxjs';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent implements OnInit, OnDestroy {
+export class RegisterComponent {
   registerForm: FormGroup;
   isLoading = false;
-  darkMode = false;
-  private themeSubscription!: Subscription;
   
   constructor(
     private formBuilder: FormBuilder,
@@ -49,18 +47,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     });
   }
   
-  ngOnInit(): void {
-    // Subscribe to theme changes
-    this.themeSubscription = this.themeService.darkMode$.subscribe(isDark => {
-      this.darkMode = isDark;
-    });
-  }
-  
-  ngOnDestroy(): void {
-    if (this.themeSubscription) {
-      this.themeSubscription.unsubscribe();
-    }
-  }
   
   onSubmit(): void {
     if (this.registerForm.invalid) {

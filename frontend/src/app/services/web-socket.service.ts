@@ -41,15 +41,12 @@ export class WebSocketService {
             headers: { 'content-type': 'application/json' }
         });
 
-        console.log(res)
-
         // Extract a proper session ID from the connection
         console.log("Extracted session ID:", this.sessionId);
 
         // Subscribe to the user-specific crypto topic
         if (this.sessionId) {
             this.stompClient?.subscribe(`/update/crypto`, (message) => {
-            console.log("Received:", message.body);
             this.messageSubject.next(message.body);
             });
         }
