@@ -1,0 +1,215 @@
+<div class="dashboard-container" [ngClass]="{'dark-theme': darkMode, 'light-theme': !darkMode}">
+  
+  <div class="dashboard-header">
+    <h1>Portfolio Overview</h1>
+    <p class="subtitle">Your cryptocurrency holdings and transaction history</p>
+  </div>
+  
+  <div class="summary-cards">
+    <div class="summary-card">
+      <div class="card-icon balance-icon">
+        <i class="pi pi-wallet"></i>
+      </div>
+      <div class="card-content">
+        <span class="card-label">Account Balance</span>
+        <span class="card-value">${{ userBalance | number:'1.2-2' }}</span>
+      </div>
+    </div>
+    
+    <div class="summary-card">
+      <div class="card-icon portfolio-icon">
+        <i class="pi pi-chart-pie"></i>
+      </div>
+      <div class="card-content">
+        <span class="card-label">Portfolio Value</span>
+        <span class="card-value">${{ portfolioValue | number:'1.2-2' }}</span>
+      </div>
+    </div>
+    
+    <div class="summary-card">
+      <div class="card-icon profit-loss-icon" [ngClass]="getProfitLossClass(totalProfitLoss)">
+        <i class="pi" [ngClass]="totalProfitLoss >= 0 ? 'pi-arrow-up' : 'pi-arrow-down'"></i>
+      </div>
+      <div class="card-content">
+        <span class="card-label">Total Profit/Loss</span>
+        <span class="card-value" [ngClass]="getProfitLossClass(totalProfitLoss)">
+          {{ totalProfitLoss >= 0 ? '+' : '' }}${{ totalProfitLoss | number:'1.2-2' }}
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Holdings Section -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Current Holdings</h2>
+      <button class="refresh-button">
+        <i class="pi pi-refresh"></i> Refresh
+      </button>
+    </div>
+    
+    <p-table [value]="holdings" [responsive]="true" styleClass="holdings-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Asset</th>
+          <th>Amount</th>
+          <th>Average Price</th>
+          <th>Current Value</th>
+          <th>Profit/Loss</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-holding>
+        <tr>
+          <td class="asset-cell">
+            <div class="crypto-icon" [style.background-color]="generateColorFromSymbol(holding.cryptoCode)" [attr.data-symbol]="holding.cryptoCode">
+              {{ holding.cryptoCode.slice(0,1) }}
+            </div>
+            <span class="asset-name">{{ holding.cryptoCode }}</span>
+          </td>
+          <td>{{ holding.amount | number:'1.2-8' }}</td>
+          <td>${{ holding.averagePricing | number:'1.0-8' }}</td>
+          <td>${{ holding.currentValue | number:'1.2-2' }}</td>
+          <td>
+            <div class="change-indicator" [ngClass]="getProfitLossClass(holding.profitLoss || 0)">
+              <i class="pi" [ngClass]="(holding.profitLoss || 0) > 0 ? 'pi-arrow-up' : (holding.profitLoss || 0) < 0 ? 'pi-arrow-down' : 'pi-minus'"></i>
+              <span>{{ (holding.profitLoss || 0) > 0 ? '+' : '' }}${{ holding.profitLoss || 0 | number:'1.2-5' }}</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="empty-message">
+            <div class="empty-state">
+              <i class="pi pi-inbox"></i>
+              <p>You don't have any holdings yet</p>
+              <p class="empty-hint">Start trading to build your portfolio</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  
+  <!-- Transaction History Section -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Transaction History</h2>
+    </div>
+    
+    <p-table [value]="transactions" [responsive]="true" styleClass="transactions-table">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Asset</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Price</th>
+          <th>Total</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-transaction>
+        <tr>
+          <td class="asset-cell">
+            <div class="crypto-icon" [style.background-color]="generateColorFromSymbol(transaction.cryptoCode)" [attr.data-symbol]="transaction.cryptoCode">
+              {{ transaction.cryptoCode.slice(0,1) }}
+            </div>
+            <span class="asset-name">{{ transaction.cryptoCode }}</span>
+          </td>
+          <td>
+            <span class="transaction-type" [ngClass]="transaction.tradeType === 'BUY' ? 'buy' : 'sell'">
+              {{ transaction.tradeType }}
+            </span>
+          </td>
+          <td>{{ transaction.amount | number:'1.2-8' }}</td>
+          <td>${{ transaction.fixedPrice | number:'1.0-8' }}</td>
+          <td>${{ (transaction.amount * transaction.fixedPrice)  | number:'1.2-2' }}</td>
+          <td>{{ formatTimestamp(transaction.createdAt) }}</td>
+          <td>
+            <button class="action-button" (click)="showTransactionDetails(transaction)">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="empty-message">
+            <div class="empty-state">
+              <i class="pi pi-history"></i>
+              <p>No transaction history found</p>
+              <p class="empty-hint">Your trades will appear here</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Transaction Detail Dialog -->
+  <p-dialog 
+    [(visible)]="showTransactionDialog" 
+    [modal]="true" 
+    [resizable]="false"
+    [draggable]="true"
+    [style]="{width: '90%', maxWidth: '600px'}"
+    styleClass="transaction-detail-dialog" 
+    *ngIf="selectedTransaction">
+    
+    <ng-template pTemplate="header">
+      <div class="dialog-header">
+        <div class="crypto-icon-large" 
+             [style.background-color]="generateColorFromSymbol(selectedTransaction.cryptoCode)"
+             [attr.data-symbol]="selectedTransaction.cryptoCode">
+          {{ selectedTransaction.cryptoCode.slice(0,1) }}
+        </div>
+        <h2>{{ selectedTransaction.cryptoCode }} Transaction Details</h2>
+      </div>
+    </ng-template>
+    
+    <div class="transaction-detail-content">
+      <div class="detail-section">
+        <h3>Order Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Transaction ID</span>
+            <span class="detail-value">#{{ selectedTransaction.uuid }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Transaction Type</span>
+            <span class="detail-value" [ngClass]="selectedTransaction.tradeType === 'BUY' ? 'positive' : 'negative'">
+              {{ selectedTransaction.tradeType }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Amount</span>
+            <span class="detail-value">{{ selectedTransaction.amount | number:'1.2-8' }} {{ selectedTransaction.cryptoCode }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Price per Unit</span>
+            <span class="detail-value">${{ selectedTransaction.fixedPrice | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detail-section">
+        <h3>Payment Details</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Transaction Fee</span>
+            <span class="detail-value">$0.00</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Date & Time</span>
+            <span class="detail-value">{{ formatTimestamp(selectedTransaction.createdAt) }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="detail-value status-completed">Completed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+</div>

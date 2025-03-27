@@ -54,6 +54,10 @@ export class CryptoService {
     this.crypto.set(newData.symbol, newData);
     this.cryptoUpdated.next(true);
   }
+
+  public get cryptoPricesUpdated$(): Observable<boolean> {
+    return this.cryptoUpdated.asObservable();
+  }
   
   public fetchCryptoData(): void {
     this.http.get<Crypto[]>(env.apiUrl + '/crypto').subscribe({

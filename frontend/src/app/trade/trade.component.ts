@@ -84,25 +84,20 @@ export class TradeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Subscribe to theme service
     this.themeSubscription = this.themeService.darkMode$.subscribe(isDark => {
       this.darkMode = isDark;
     });
     
-    // Fetch available cryptocurrencies from the backend
     this.fetchCryptocurrencies();
 
-    // Get user balance
     this.authService.currentUser$.subscribe(user => {
       if (user) {
         this.userBalance = user.balance ?? 0;
       }
     });
     
-    // Fetch user's holdings
     this.fetchUserHoldings();
     
-    // Subscribe to form value changes to update max amounts
     this.tradeForm.get('crypto')?.valueChanges.subscribe(crypto => {
       this.updateMaxAmount();
     });
@@ -169,19 +164,17 @@ export class TradeComponent implements OnInit, OnDestroy {
     const crypto = this.tradeForm.get('crypto')?.value;
     if (!crypto) return;
 
-    // Instead of custom API call, use the already fetched data if available
     if (this.selectedCryptoData && this.selectedCryptoData.symbol === crypto) {
       this.price = this.selectedCryptoData.last;
       this.startCountdown();
       return;
     }
 
-    // Otherwise, fetch the price
     this.http.get<Crypto>(`${env.apiUrl}/crypto/${crypto}`).subscribe({
       next: (data) => {
         this.price = data.last;
-        this.selectedCryptoData = data; // Update the selected crypto data
-        this.updateMaxAmount(); // Update max amount when price is fetched
+        this.selectedCryptoData = data;
+        this.updateMaxAmount(); 
         this.startCountdown();
       },
       error: (error) => {

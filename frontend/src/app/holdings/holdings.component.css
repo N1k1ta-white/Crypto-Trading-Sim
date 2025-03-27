@@ -1,0 +1,626 @@
+/* CSS Variables for theming - base light theme */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9f9f9;
+  --bg-table-header: #f8f9fa;
+  --bg-table-hover: #f8f9fa;
+  --bg-card: #ffffff;
+  --border-color: #eee;
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --text-subtitle: #7f8c8d;
+  --price-up: #00a152; /* Darker green for light mode */
+  --price-down: #d32f2f; /* Darker red for light mode */
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --gradient-start: #3498db;
+  --gradient-end: #2c3e50;
+  --positive-bg: rgba(46, 204, 113, 0.35);
+  --negative-bg: rgba(231, 76, 60, 0.35);
+  --neutral-bg: rgba(149, 165, 166, 0.25);
+}
+
+/* Apply dark theme variables when dark-theme class is applied */
+.dark-theme {
+  --bg-primary: #1a1c1e;
+  --bg-secondary: #2c3032;
+  --bg-table-header: #2c3032;
+  --bg-table-hover: #2f3335;
+  --bg-card: #242729;
+  --border-color: #333;
+  --text-primary: #e5e5e5;
+  --text-secondary: #a0a0a0;
+  --text-subtitle: #a0a0a0;
+  --price-up: #4cd987; /* Brighter green for dark mode */
+  --price-down: #ff6b6b; /* Brighter red for dark mode */
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --gradient-start: #4fa3e3;
+  --gradient-end: #78a2c5;
+  --positive-bg: rgba(46, 204, 113, 0.4); /* Increased opacity for dark mode */
+  --negative-bg: rgba(231, 76, 60, 0.4); /* Increased opacity for dark mode */
+  --neutral-bg: rgba(149, 165, 166, 0.3);
+}
+
+/* Host element theming */
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  --gradient-start: #3498db; /* Brighter blue for light mode */
+  --gradient-end: #2c3e50; /* Darker blue for light mode */
+}
+
+/* Adjust gradient colors for dark mode if needed */
+:host-context(.dark-theme),
+.dark-theme {
+  --gradient-start: #4fa3e3; /* Slightly lighter blue for dark mode */
+  --gradient-end: #78a2c5; /* More vibrant blue for dark mode */
+}
+
+/* Main container for the dashboard */
+.dashboard-container {
+  padding: 2rem;
+  min-height: calc(100vh - 4rem);
+  width: calc(100% - 4rem);
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
+}
+
+/* Dashboard header styles */
+.dashboard-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  /* Add a fallback color first */
+  color: var(--text-primary);
+  /* Then apply the gradient with better contrast colors */
+  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Add text shadow for better visibility */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.subtitle {
+  color: var(--text-subtitle);
+  font-size: 1.1rem;
+}
+
+/* Summary cards */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background-color: var(--bg-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px var(--shadow-color);
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px var(--shadow-color);
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.balance-icon {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.portfolio-icon {
+  background: linear-gradient(135deg, #9b59b6, #8e44ad);
+}
+
+.profit-loss-icon {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.profit-loss-icon.negative {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.profit-loss-icon.neutral {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.3rem;
+}
+
+.card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.card-value.positive {
+  color: var(--price-up);
+}
+
+.card-value.negative {
+  color: var(--price-down);
+}
+
+.card-value.neutral {
+  color: var(--text-secondary);
+}
+
+/* Card styles */
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px var(--shadow-color);
+  overflow: hidden;
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.card-header {
+  padding: 1.5rem 2rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.card-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.refresh-button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.refresh-button:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: var(--gradient-start);
+}
+
+.refresh-button .pi {
+  margin-right: 0.5rem;
+}
+
+/* Table styling */
+:host ::ng-deep .holdings-table,
+:host ::ng-deep .transactions-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+:host ::ng-deep .holdings-table th,
+:host ::ng-deep .transactions-table th {
+  background-color: var(--bg-table-header);
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+:host ::ng-deep .holdings-table td,
+:host ::ng-deep .transactions-table td {
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+:host ::ng-deep .holdings-table tr:hover,
+:host ::ng-deep .transactions-table tr:hover {
+  background-color: var(--bg-table-hover);
+  transition: background-color 0.3s ease;
+}
+
+/* Asset cell with icon */
+.asset-cell {
+  display: flex;
+  align-items: center;
+}
+
+.crypto-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.asset-name {
+  font-weight: 600;
+}
+
+/* Transaction type styling */
+.transaction-type {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  display: inline-block;
+  text-align: center;
+  min-width: 70px;
+}
+
+.transaction-type.buy {
+  background-color: var(--positive-bg);
+  color: var(--price-up);
+}
+
+.transaction-type.sell {
+  background-color: var(--negative-bg);
+  color: var(--price-down);
+}
+
+/* Change indicator styling */
+.change-indicator {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.change-indicator.positive {
+  background-color: var(--positive-bg);
+  color: var(--price-up);
+}
+
+.change-indicator.negative {
+  background-color: var(--negative-bg);
+  color: var(--price-down);
+}
+
+.change-indicator.neutral {
+  background-color: var(--neutral-bg);
+  color: var(--text-secondary);
+}
+
+.change-indicator i {
+  margin-right: 5px;
+}
+
+/* Action button styling */
+.action-button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-button:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+  color: var(--gradient-start);
+}
+
+/* Empty state styling */
+.empty-message {
+  padding: 2rem !important;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+.empty-hint {
+  font-size: 0.9rem !important;
+  opacity: 0.7;
+}
+
+/* Dialog styling */
+:host ::ng-deep .transaction-detail-dialog {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  max-width: 90%;
+  width: auto;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+:host ::ng-deep .transaction-detail-dialog .p-dialog-header {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.5rem;
+  background-image: linear-gradient(to bottom, var(--bg-secondary), var(--bg-card));
+}
+
+:host ::ng-deep .transaction-detail-dialog .p-dialog-content {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  padding: 0;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+:host ::ng-deep .p-dialog-mask {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+:host ::ng-deep .p-dialog-header-icon {
+  color: var(--text-primary) !important;
+  background-color: transparent !important;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  margin-left: 0.5rem;
+}
+
+:host ::ng-deep .p-dialog-header-icon:hover {
+  background-color: var(--bg-table-hover) !important;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.crypto-icon-large {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.transaction-detail-content {
+  padding: 1.5rem;
+}
+
+.detail-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+}
+
+.detail-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.detail-section h3 {
+  font-size: 1.2rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.detail-item:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.detail-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.3rem;
+}
+
+.detail-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.detail-value.positive {
+  color: var(--price-up);
+}
+
+.detail-value.negative {
+  color: var(--price-down);
+}
+
+.status-completed {
+  color: var(--price-up);
+  display: inline-flex;
+  align-items: center;
+}
+
+.status-completed::before {
+  content: "●";
+  margin-right: 4px;
+}
+
+/* Light theme specific styles */
+.light-theme.dashboard-container {
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+.light-theme .card {
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e6e9f0;
+}
+
+.light-theme .card-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e6e9f0;
+}
+
+.light-theme p-table ::ng-deep .p-datatable-tbody > tr {
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.light-theme p-table ::ng-deep .p-datatable-thead > tr > th {
+  background-color: #f9fafb;
+  color: #333;
+  border-bottom: 1px solid #e6e9f0;
+}
+
+.light-theme p-table ::ng-deep tr:hover {
+  background-color: #f0f5ff !important;
+}
+
+.light-theme p-dialog ::ng-deep .p-dialog-content,
+.light-theme p-dialog ::ng-deep .p-dialog-header {
+  background-color: #ffffff;
+  color: #333;
+}
+
+.light-theme .detail-section {
+  background-color: #f9fafb;
+  border: 1px solid #e6e9f0;
+}
+
+.light-theme .action-button {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #e0e0e0;
+}
+
+.light-theme .action-button:hover {
+  background-color: #e5e5e5;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+    width: calc(100% - 2rem);
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card-header {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .refresh-button {
+    margin-top: 0.5rem;
+  }
+
+  :host ::ng-deep .holdings-table th,
+  :host ::ng-deep .holdings-table td,
+  :host ::ng-deep .transactions-table th,
+  :host ::ng-deep .transactions-table td {
+    padding: 0.8rem 1rem;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

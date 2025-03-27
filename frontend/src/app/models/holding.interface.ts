@@ -4,4 +4,6 @@ export interface Holding {
     type: string;
     amount: number;
     profit?: number;
+    currentValue?: number;
+    profitLoss?: number;
 }

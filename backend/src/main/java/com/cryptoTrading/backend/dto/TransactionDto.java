@@ -21,5 +21,5 @@ public class TransactionDto {
     private BigDecimal fixedPrice;
     private BigDecimal amount;
     private BigDecimal profit;
-    private Instant createdAt;
+    private BigDecimal createdAt;
 }

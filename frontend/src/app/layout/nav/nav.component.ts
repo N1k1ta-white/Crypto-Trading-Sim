@@ -70,7 +70,7 @@ export class NavComponent implements OnInit, OnDestroy {
         {
           label: 'Portfolio',
           icon: 'pi pi-chart-pie',
-          routerLink: '/portfolio'
+          routerLink: '/holdings'
         },
         {
           label: 'Trading',
