@@ -1,18 +1,14 @@
 package com.cryptoTrading.backend.service;
 
-import com.cryptoTrading.backend.exceptions.InsufficientFundsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.BadCredentialsException;
 
 import com.cryptoTrading.backend.dto.UserDto;
 import com.cryptoTrading.backend.entity.User;
 import com.cryptoTrading.backend.exceptions.AuthenticationException;
 import com.cryptoTrading.backend.exceptions.DuplicateResourceException;
 import com.cryptoTrading.backend.exceptions.ResourceNotFoundException;
-import com.cryptoTrading.backend.exceptions.UnauthorizedOperationException;
 import com.cryptoTrading.backend.mapper.UserMapper;
 import com.cryptoTrading.backend.repository.UserRepository;
 import com.cryptoTrading.backend.config.JwtService;

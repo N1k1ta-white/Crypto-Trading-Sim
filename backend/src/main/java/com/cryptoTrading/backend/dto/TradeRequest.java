@@ -2,10 +2,6 @@ package com.cryptoTrading.backend.dto;
 
 import java.math.BigDecimal;
 
-import com.cryptoTrading.backend.enums.TradeType;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

@@ -5,7 +5,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import com.cryptoTrading.backend.dto.TransactionDto;
-import com.cryptoTrading.backend.entity.Crypto;
 import com.cryptoTrading.backend.entity.Transaction;
 import com.cryptoTrading.backend.enums.TradeType;
 

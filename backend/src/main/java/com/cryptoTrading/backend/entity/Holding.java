@@ -2,7 +2,6 @@ package com.cryptoTrading.backend.entity;
 
 import java.math.BigDecimal;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

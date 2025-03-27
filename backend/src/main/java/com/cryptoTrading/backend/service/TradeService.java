@@ -41,6 +41,7 @@ public class TradeService {
         transactionRepository.deleteByUserId(userId);
     }
     
+    @Transactional
     public TransactionDto trade(TradeRequest tradeRequest, User user) {
         Transaction res = null;
         TradeType tradeType = TradeType.valueOf(tradeRequest.getTradeType());
@@ -53,6 +54,7 @@ public class TradeService {
         return transactionMapper.transactionToDto(res);
     }
 
+    @Transactional
     public Transaction buy(TradeRequest tradeRequest, User user) {
         BigDecimal total = tradeRequest.getFixedPrice().multiply(tradeRequest.getAmount());
 
@@ -79,6 +81,7 @@ public class TradeService {
         return transactionRepository.save(transaction);
     }
 
+    @Transactional
     public Transaction sell(TradeRequest tradeRequest, User user) {
         String code = tradeRequest.getSymbol().replace("/" + currency, "");
 
