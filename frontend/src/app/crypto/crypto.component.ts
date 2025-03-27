@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Crypto } from '../entity/crypto.entity';
+import { Crypto } from '../models/crypto.interface';
 import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';

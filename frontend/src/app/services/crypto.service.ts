@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { WebSocketService } from './web-socket.service';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Crypto } from '../entity/crypto.entity';
+import { Crypto } from '../models/crypto.interface';
 import { env } from '../env';
 
 @Injectable({

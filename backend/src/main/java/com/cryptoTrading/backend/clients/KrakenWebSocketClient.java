@@ -16,7 +16,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -155,7 +154,7 @@ public class KrakenWebSocketClient extends WebSocketClient {
                 handleStatusMessage(messageData.get(DATA_FIELD));
             break;
             default:
-                logger.info("Unhandled message type: " + messageType + " - " + messageData);
+                // logger.info("Unhandled message type: " + messageType + " - " + messageData);
             break;
         }
     }

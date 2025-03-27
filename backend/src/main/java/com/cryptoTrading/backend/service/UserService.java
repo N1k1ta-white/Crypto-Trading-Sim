@@ -3,6 +3,8 @@ package com.cryptoTrading.backend.service;
 import com.cryptoTrading.backend.exceptions.InsufficientFundsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.BadCredentialsException;
 
 import com.cryptoTrading.backend.dto.UserDto;
@@ -21,14 +23,37 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+    @Value("${reset.balance}")
+    private BigDecimal resetBalance;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserMapper userMapper;
+    private final HoldingService holdingService;
+    private final TradeService tradeService;
+
+    @Transactional
+    public UserDto resetUser(Long userId) {
+        User user = getUserByIdInternal(userId);
+        
+        // First delete transactions (no foreign key dependencies)
+        tradeService.removeTransactions(userId);
+        
+        // Then delete holdings (before cryptos)
+        holdingService.removeHolding(userId);
+        
+        // Reset user balance
+        user.setBalance(resetBalance);
+        userRepository.save(user);
+        
+        return userMapper.userToDto(user);
+    }
 
     public UserDto registerUser(UserDto userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
@@ -110,20 +135,5 @@ public class UserService {
     public User getUserByIdInternal(Long id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-    }
-
-    public void addBalance(Long id, BigDecimal amount) {
-        User user = getUserByIdInternal(id);
-        user.setBalance(user.getBalance().add(amount));
-        userRepository.save(user);
-    }
-
-    public void removeBalance(Long id, BigDecimal amount) {
-        User user = getUserByIdInternal(id);
-        if (user.getBalance().compareTo(amount) < 0) {
-            throw new InsufficientFundsException("Insufficient balance to remove");
-        }
-        user.setBalance(user.getBalance().subtract(amount));
-        userRepository.save(user);
     }
 }

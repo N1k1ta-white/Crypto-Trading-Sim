@@ -33,7 +33,7 @@ public class Holding {
     @Column(nullable = false, precision = 30, scale = 20)
     private BigDecimal averagePricing;
 
-    @ManyToOne(targetEntity = Crypto.class, optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Crypto.class, optional = false, fetch = FetchType.LAZY, cascade = {})
     @JoinColumn(nullable = false)
     private Crypto crypto;
 

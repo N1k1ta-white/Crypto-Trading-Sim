@@ -11,10 +11,11 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { env } from '../env';
-import { Crypto } from '../entity/crypto.entity';
+import { Crypto } from '../models/crypto.interface';
 import { TradeRequest } from '../models/trade-request.interface';
 import { AuthService } from '../services/auth.service';
 import { CryptoService } from '../services/crypto.service';
+import { Holding } from '../models/holding.interface';
 
 @Component({
   selector: 'app-trade',
@@ -254,7 +255,8 @@ export class TradeComponent implements OnInit, OnDestroy {
       error: (error) => {
         let errorMsg = `Your ${tradeAction.toLowerCase()} of ${amount} ${cryptoSymbol} could not be processed.`;
         
-        this.showErrorToast(`${tradeAction} Failed`, errorMsg + error.message, 5000);
+        this.price = null;
+        this.showErrorToast(`${tradeAction} Failed`, errorMsg, 5000);
       }
     });
   }
@@ -270,12 +272,13 @@ export class TradeComponent implements OnInit, OnDestroy {
   }
 
   fetchUserHoldings() {
-    this.http.get<any>(`${env.apiUrl}/holdings`).subscribe({
+    this.http.get<Holding[]>(`${env.apiUrl}/holding`).subscribe({
       next: (holdings) => {
         // Create a map of crypto code to amount
+        console.log('holdings', holdings);
         this.userHoldings = {};
-        holdings.forEach((holding: any) => {
-          this.userHoldings[holding.crypto] = +holding.amount;
+        holdings.forEach((holding: Holding) => {
+          this.userHoldings[holding.cryptoCode] = holding.amount;
         });
         this.updateMaxAmount();
       },
@@ -296,15 +299,12 @@ export class TradeComponent implements OnInit, OnDestroy {
     
     if (tradeType === 'BUY') {
       if (this.approxPrice && this.approxPrice > 0 && this.userBalance > 0) {
-        // Calculate max amount user can buy with their balance
-        // Reduce slightly to account for price fluctuations
         this.maxAmount = this.userBalance / this.approxPrice * 0.99;
       } else {
         this.maxAmount = null;
       }
     } else if (tradeType === 'SELL') {
-      // Get the amount of this crypto that the user owns
-      const cryptoCode = crypto.replace(/\/.*$/, ''); // Remove the trading pair suffix if any
+      const cryptoCode = crypto.replace(/\/.*$/, '');
       this.maxAmount = this.userHoldings[cryptoCode] || 0;
     }
   }

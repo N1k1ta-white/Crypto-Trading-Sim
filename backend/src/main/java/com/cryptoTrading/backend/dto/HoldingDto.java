@@ -1,7 +1,6 @@
 package com.cryptoTrading.backend.dto;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,12 +13,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TransactionDto {
-    private String uuid;
-    private String cryptoCode;
-    private String tradeType;
-    private BigDecimal fixedPrice;
-    private BigDecimal amount;
-    private BigDecimal profit;
-    private Instant createdAt;
+public class HoldingDto {
+    BigDecimal averagePricing;
+    String cryptoCode;
+    BigDecimal amount;
 }

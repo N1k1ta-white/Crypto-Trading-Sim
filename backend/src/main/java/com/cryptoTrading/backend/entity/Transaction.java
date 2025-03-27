@@ -34,10 +34,10 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {})
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {})
     private Crypto crypto;
 
     @Column(nullable = false)
@@ -48,6 +48,9 @@ public class Transaction {
 
     @Column(nullable = false, precision = 30, scale = 20)
     private BigDecimal amount;
+
+    @Column(nullable = true, updatable = false)
+    private BigDecimal profit;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

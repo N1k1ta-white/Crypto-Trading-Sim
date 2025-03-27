@@ -2,12 +2,17 @@ package com.cryptoTrading.backend.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.cryptoTrading.backend.dto.HoldingDto;
 import com.cryptoTrading.backend.entity.Crypto;
 import com.cryptoTrading.backend.entity.Holding;
 import com.cryptoTrading.backend.entity.User;
+import com.cryptoTrading.backend.mapper.HoldingMapper;
 import com.cryptoTrading.backend.repository.HoldingRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +22,26 @@ import lombok.RequiredArgsConstructor;
 public class HoldingService {
     
     private final HoldingRepository holdingRepository;
+    private final HoldingMapper holdingMapper;
+
+    @Transactional
+    public void removeHolding(Long userId) {
+        holdingRepository.deleteByUserId(userId);
+    }
+
+    public BigDecimal calculateProfit(User user, Crypto crypto, BigDecimal amount,
+                                      BigDecimal fixedPrice) {
+        return holdingRepository.findByUserIdAndCryptoCode(user.getId(), crypto.getCode())
+            .map(holding -> amount.multiply(fixedPrice)
+                            .subtract(holding.getAveragePricing().multiply(amount)))
+            .orElse(BigDecimal.ZERO);
+    }
+
+    public List<HoldingDto> getHoldings(Long userId) {
+        return holdingRepository.findByUserId(userId).stream()
+            .map(holdingMapper::holdingToDto)
+            .collect(Collectors.toList());
+    }
 
     public void addCrypto(User user, Crypto crypto, BigDecimal amount, BigDecimal fixedPrice) {
         holdingRepository.findByUserIdAndCryptoCode(user.getId(), crypto.getCode())

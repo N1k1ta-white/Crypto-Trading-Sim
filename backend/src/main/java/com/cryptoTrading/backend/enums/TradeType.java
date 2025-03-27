@@ -1,9 +1,7 @@
 package com.cryptoTrading.backend.enums;
 
 public enum TradeType {
-    BUY, SELL
-
-    , UNKNOWN;
+    BUY, SELL, UNKNOWN;
 
     public static TradeType fromString(String text) {
         if (text != null) {
