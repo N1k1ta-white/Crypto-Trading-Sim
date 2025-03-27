@@ -33,7 +33,7 @@
       <div class="card-content">
         <span class="card-label">Total Profit/Loss</span>
         <span class="card-value" [ngClass]="getProfitLossClass(totalProfitLoss)">
-          {{ totalProfitLoss >= 0 ? '+' : '' }}${{ totalProfitLoss | number:'1.2-2' }}
+          {{ totalProfitLoss < 0 ? '-' : '' }}${{ abs(totalProfitLoss) | number:'1.2-2' }}
         </span>
       </div>
     </div>
@@ -72,7 +72,7 @@
           <td>
             <div class="change-indicator" [ngClass]="getProfitLossClass(holding.profitLoss || 0)">
               <i class="pi" [ngClass]="(holding.profitLoss || 0) > 0 ? 'pi-arrow-up' : (holding.profitLoss || 0) < 0 ? 'pi-arrow-down' : 'pi-minus'"></i>
-              <span>{{ (holding.profitLoss || 0) > 0 ? '+' : '' }}${{ holding.profitLoss || 0 | number:'1.2-5' }}</span>
+              <span>{{ (holding.profitLoss || 0) < 0 ? '' : '-' }}${{ abs(holding.profitLoss) || 0 | number:'1.2-5' }}</span>
             </div>
           </td>
         </tr>

@@ -36,6 +36,7 @@ export class HoldingsComponent implements OnInit, OnDestroy {
   
   private themeSubscription!: Subscription;
   private cryptoPriceSubscription!: Subscription;
+  private updateSubscription!: Subscription;
   
   constructor(
     private http: HttpClient,
@@ -48,6 +49,11 @@ export class HoldingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.themeSubscription = this.themeService.darkMode$.subscribe(isDark => {
       this.darkMode = isDark;
+    });
+
+    this.updateSubscription = this.cryptoService.getCryptoUpdates().subscribe(() => {
+      this.calculatePortfolioValue();
+      this.calculateProfitLoss();
     });
     
     this.cryptoPriceSubscription = this.cryptoService.cryptoPricesUpdated$.subscribe(() => {
@@ -122,6 +128,10 @@ export class HoldingsComponent implements OnInit, OnDestroy {
       profit += transaction.profit ?? 0;
     });
 
+    this.holdings.forEach(holding => {
+      profit += holding.profitLoss ?? 0;
+    })
+
     this.totalProfitLoss = profit;
   }
   
@@ -164,5 +174,9 @@ export class HoldingsComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  abs(value: number): number {
+    return Math.abs(value);
   }
 }
